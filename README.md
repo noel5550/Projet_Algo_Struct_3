@@ -1,6 +1,5 @@
 # Projet_Algo_Struct_3
 Projet Algo Struct 3 avec Félix Pinel.
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/Project_Blood_Bowl/Lobby?utm_source=share-link&utm_medium=link&utm_campaign=share-link)
 
 Project with Félix PINEL and Elbert Noel NYUNTING 
 
