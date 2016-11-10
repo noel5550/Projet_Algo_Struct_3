@@ -12,7 +12,7 @@ class Tile{
 	private int x_;
 	private int y_;
 	private Color coul_;
-	private boolean libre_;
+	private boolean etoile_;
 
 
 	/**
@@ -25,8 +25,8 @@ class Tile{
 	public Tile(int x, int y){
 		x_ = x;
 		y_ = y;
-		coul_ = gray;
-		libre_ = true;
+		coul_ = Color.gray;
+		etoile_ = false;
 	}
 	
 	
@@ -43,7 +43,7 @@ class Tile{
 	}
 	
 	public boolean isLibre(){
-		return libre_;
+		return etoile_;
 	}
 	
 	public void setX(int x){
@@ -55,17 +55,36 @@ class Tile{
 	}
 	
 	public void setColor(Color coul){
-		coul_ = coul;
+		if (coul_ == Color.gray){
+			coul_ = coul;
+		}else{
+			System.out.println("Cette case est prise !");
+		}
 	}
 	
 	public void setLibre(){
-		libre_ = true;
+		etoile_ = true;
 	}
 	
 	public void unsetLibre(){
-		libre_ = false;
+		etoile_ = false;
 	}
 	
+	public void decX(){
+		--x_;
+	}
+	
+	public void incX(){
+		++x_;
+	}
+	
+	public void decY(){
+		--y_;
+	}
+	
+	public void incY(){
+		++y_;
+	}
 	
 	
 }
