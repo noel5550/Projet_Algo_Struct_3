@@ -117,20 +117,34 @@ class Tile extends JPanel {
 		add(symbol);
 	}
 
-
-	/*//!\ Méthode utile à afficheComposante
-	public void colorerTemp(){
-
-		if (getBackground() != Color.green)
-			setBackground(Color.green);
-		else if(case_ == 1)
+	public void colorTile(String color){
+		if(color.equals("yellow")){
+			setBackground(Color.yellow);
+		}
+		if(color.equals("red")){
+			setBackground(Color.redr);
+		}
+		if(color.equals("blue")){
 			setBackground(Color.blue);
-		else if(case_ == 2)
+		}
+		if(color.equals("white")){
+			setBackground(Color.white);
+		}		
+	}
+	
+	/*//!\ Méthode utile à afficheComposante
+	public void blinkingTile(){
+
+		if (getBackground() != Color.yellow)
+			setBackground(Color.yellow);
+		else if(tilePlayer_ == 1)
+			setBackground(Color.blue);
+		else if(tilePlayer_ == 2)
 			setBackground(Color.red);
 		else
 			setBackground(Color.white);
 	}
-*/
+	*/
 
 	//!\ Méthode utile à l'initialisation de la grille de jeu
 	/*public boolean setBase(int val){

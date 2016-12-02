@@ -1,20 +1,20 @@
 import java.util.*;
 
-class ClasseUnion{
+class UnionClass{
 	
-	private ArrayList<Indice> classe_;
+	private ArrayList<Indice> classUnion_;
 	private int taille_;
 
 
-	//!\ Constructeur de la ClasseUnion
-	public ClasseUnion(int t){
+	//!\ Constructeur de la UnionClass
+	public UnionClass(int t){
 
 		//!\ Initialisation des variables
 		taille_ = t;
-		classe_ = new ArrayList<Indice>();
+		classUnion_ = new ArrayList<Indice>();
 
 		for (int x = 0; x < taille_*taille_; ++x) {
-			classe_.add(new Indice());
+			classUnion_.add(new Indice());
 		}
 	}
 
@@ -22,33 +22,33 @@ class ClasseUnion{
 	//!\ Méthode d'union de la composante contenant la case de coordonnée (x1,y1) avec la composante contenant la case de coordonnée (x2, y2) par union pondérée
 	public void union(int x1, int y1, int x2, int y2){ 
 
-		int vRac = classe(x1,y1);
-		int wRac = classe(x2,y2);
-		int tv = getTousFils(vRac%taille_, vRac/taille_).size();
-		int tw = getTousFils(wRac%taille_, wRac/taille_).size();
+		int vRac = classUnion(x1,y1);
+		int wRac = classUnion(x2,y2);
+		int tv = getAllFils(vRac%taille_, vRac/taille_).size();
+		int tw = getAllFils(wRac%taille_, wRac/taille_).size();
 
 
 		if (vRac != wRac) {
 			if (tv <= tw) {
-				classe_.get(vRac).setPere(wRac);
-				classe_.get(wRac).ajouterFils(vRac);
+				classUnion_.get(vRac).setPere(wRac);
+				classUnion_.get(wRac).ajouterFils(vRac);
 			}
 			else{
-				classe_.get(wRac).setPere(vRac);
-				classe_.get(vRac).ajouterFils(wRac);
+				classUnion_.get(wRac).setPere(vRac);
+				classUnion_.get(vRac).ajouterFils(wRac);
 			}
 		}
 
 	}
 
 
-	//!\ Méthode retournant la classe d'une case de coordonnée (x, y) avec compression des chemins
-	public int classe(int x, int y){
-		if (classe_.get(x+y*taille_).getPere() == -1)
+	//!\ Méthode retournant la classUnion d'une case de coordonnée (x, y) avec compression des chemins
+	public int classUnion(int x, int y){
+		if (classUnion_.get(x+y*taille_).getPere() == -1)
 			return (x+y*taille_);
 		else{	
-			int a = classe(classe_.get(x+y*taille_).getPere()%taille_, classe_.get(x+y*taille_).getPere()/taille_);
-			classe_.get(x+y*taille_).setPere(a);
+			int a = classUnion(classUnion_.get(x+y*taille_).getPere()%taille_, classUnion_.get(x+y*taille_).getPere()/taille_);
+			classUnion_.get(x+y*taille_).setPere(a);
 			return a;	
 		}
 	}
@@ -60,19 +60,19 @@ class ClasseUnion{
 		return taille_;
 	}
 
-	//!\ Permet d'obtenir tous les fils d'un Indice de la ClasseUnion (cette fonction est généralement appelé sur la racine)
-	public ArrayList<Integer> getTousFils(int x, int y){
+	//!\ Permet d'obtenir tous les fils d'un Indice de la UnionClass (cette fonction est généralement appelé sur la racine)
+	public ArrayList<Integer> getAllFils(int x, int y){
 		
-		int t = classe_.get(x+y*taille_).getFils().size();
+		int t = classUnion_.get(x+y*taille_).getFils().size();
 
 		if (t == 0)
 			return (new ArrayList<Integer>());
 
 		else{
 			ArrayList<Integer> tmp = new ArrayList<Integer>();
-			tmp.addAll(classe_.get(x+y*taille_).getFils());
+			tmp.addAll(classUnion_.get(x+y*taille_).getFils());
 			for (int i = 0; i < t; ++i)
-				tmp.addAll(getTousFils(tmp.get(i)%taille_, tmp.get(i)/taille_));
+				tmp.addAll(getAllFils(tmp.get(i)%taille_, tmp.get(i)/taille_));
 
 			return tmp;
 		}

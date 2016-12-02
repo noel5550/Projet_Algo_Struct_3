@@ -24,7 +24,7 @@ class Grid extends JPanel {
 	
 	private Tile tiletileTab_[];
 	private UnionClass class_;	
-	private ArrayList<Integer> playerBase1
+	private ArrayList<Integer> playerBase1;
 	private ArrayList<Integer> playerBase2;		
 	private int size_;											
 	private int dim_; 												
@@ -45,6 +45,26 @@ class Grid extends JPanel {
 			throw new Exception ("Plus de bases ! ");
 		}
 		
+		if(baseNum >= size){
+			throw new Exception ("Pas de place pour jouer ! ");
+		}
+		/*
+		* Compteurs
+		*/
+		int cmpt = 0;
+		int base1Player1;
+		int base2Player1;
+		int base1Player2;
+		int base2Player2;
+		int cmpt2;
+		int distCases;
+		
+		boolean assezEspaceePlayer1;
+		boolean assezEspaceePlayer2;
+		
+		/*
+		* Setting attributes
+		*/
 		this.size_ = size;
 		class_ = new UnionClass(size_);
 		tileTab_ = new Tile[size_*size_];
@@ -62,9 +82,9 @@ class Grid extends JPanel {
 		/*
 		*	Remplissage du grid
 		*/
-		int cmpt = 0;
+		
 		while (cmpt < size_*size_){
-			tileTab_[cmpt] = new Tile();
+			tileTab_[cmpt] = new Tile(0);
 			cmpt ++;
 			add(tileTab_[cmpt]);
 		} 
@@ -82,96 +102,71 @@ class Grid extends JPanel {
 			/*
 			*	première case
 			*/
-			int base1 = 0;
+			base1 = 0;
 			
 			/*
 			*	deuxième case
 			*/
-			int base2 = 0;
+			base2 = 0;
 			
 			/*
 			* Pour voir si deux cases sont assez espacées l'un de l'autre
 			*/
-			boolean assezEspacee = true;
+			assezEspaceePlayer1 = true;
+			assezEspaceePlayer2 = true;
 			
-			int cmpt2;
-			int distCases;
+			
 			while(getValue(base1, base2) != 0 || !assezEspacee){
-				assezEspacee = true
-				base1 = (int)(size_ * Math.random());
-				base2 = (int)(size_ * Math.random());
+				assezEspaceePlayer1 = true;
+				assezEspaceePlayer2 = true;
+				base1Player1 = (int)(size_ * Math.random());
+				base2Player1 = (int)(size_ * Math.random());
+				
+				base1Player2 = (int)(size_ * Math.random());
+				base2Player2 = (int)(size_ * Math.random());
 				cmpt2 = 0;
 				
-				 
-				while(cmpt2 < playerBase1.size()){
-					distCases = distanceCase(base1, base2, playerBase1.get(cmpt2)%size_;
-					distSize = playerBase1.get(cmpt2)/size_
-					if (distCases, distSize) < distMin){
-						assezEspacee = false;
-						break;
-					
-					++cmpt2;
-					}	
+				/*
+				*Player1
+				*/ 
+				while(cmpt2 < playerBase1.size()&& assezEspaceePlayer1){
+					distCasesPlayer1 = distanceCase(base1Player1, base2Player1, playerBase1.get(cmpt2)%size_;
+					distSizePlayer1 = playerBase1.get(cmpt2)/size_;
+								
+					if (((distCasesPlayer1, distSizePlayer1) < minimumDistance)){
+						assezEspaceePlayer1 = false;
+					}
+					++cmpt2;	
 				}
+				
+				cmpt2 = 0;
+				
+				/*
+				* Player 2
+				*/
+				while(cmpt2 < playerBase2.size() && assezEspaceePlayer2){
+					distCasesPlayer2 = distanceCase(base1Player2, base2Player2, playerBase2.get(cmpt2)%size_;
+					distSizePlayer2 = playerBase2.get(cmpt2)/size_;
+					
+					
+					if (((distCasesPlayer2, distSizePlayer2) < minimumDistance)){
+						assezEspaceePlayer2 = false;
+					}
+					++cmpt2;	
+				}
+				
 			}
 			// On modifie les coordonnée de la base tant que les coordonnées ne sont pas ceux d'une base déjà existante 
 			// et que la distance min entre la nouvelle base et toutes les bases déjà existante est bien supérieur ou égale à distMin
 							
 			// On transforme la Tile en base si les conditions sont respectées et on ajoute ses coordonnées à l'ArrayList de stockage des bases
-			tileTab_[nb1+nb2*size_].setBase(1);
-			playerBase1.add(nb1+nb2*size_);
+			tileTab_[base1Player1+base2Player1*size_].setBase(1);
+			playerBase1.add(base1+base2*size_);
+			
+			tileTab_[base1Player2+base2Player2*size_].setBase(2);
+			playerBase2.add(base1+base2*size_);
 			++cmpt;
-		}
-
-		/*
-		*	Joueur 2
-		*/
-		cmpt = 0;
-		while (cmpt < baseNum){
-			/*
-			*	première case
-			*/
-			int base1 = 0;
-			
-			/*
-			*	deuxième case
-			*/
-			int base2 = 0;
-			
-			/*
-			* Pour voir si deux cases sont assez espacées l'un de l'autre
-			*/
-			boolean assezEspacee = true;
-			
-			int cmpt2;
-			int distCases;
-			while(getValue(base1, base2) != 0 || !assezEspacee){
-				assezEspacee = true
-				base1 = (int)(size_ * Math.random());
-				base2 = (int)(size_ * Math.random());
-				cmpt2 = 0;
-				
-				 
-				while(cmpt2 < playerBase2.size()){
-					distCases = distanceCase(base1, base2, playerBase2.get(cmpt2)%size_;
-					distSize = playerBase1.get(cmpt2)/size_
-					if (distCases, distSize) < distMin){
-						assezEspacee = false;
-						break;
-					
-					++cmpt2;
-					}	
-				}
-			}
-			// On modifie les coordonnée de la base tant que les coordonnées ne sont pas ceux d'une base déjà existante 
-			// et que la distance min entre la nouvelle base et toutes les bases déjà existante est bien supérieur ou égale à distMin
-							
-			// On transforme la Tile en base si les conditions sont respectées et on ajoute ses coordonnées à l'ArrayList de stockage des bases
-			tileTab_[nb1+nb2*size_].setBase(2);
-			playerBase2.add(nb1+nb2*size_);
-			++cmpt;
-		}
-		
+		}		
 	}
 
 
@@ -188,88 +183,96 @@ class Grid extends JPanel {
 		return dim_;
 	}
 
-	public Tile getCellSouris(int x, int y){
-		return tileTab_[((x-1)/50)+((y-1)/50)*size_];
+	public Tile getTileSmall(int x, int y){
+		return tileTab_[((x-1)/25)+((y-1)/25)*size_];
 	}
 
-	public Tile getCell(int z){
-		return tileTab_[z];
+	public Tile getTile(int tileNum){
+		return tileTab_[tileNum];
 	}
 
 	public int getValue(int x, int y){
-		return tileTab_[x+y*size_].getValue();
+		return tileTab_[x+y*size_].getTilePlayer();
 	}
 
-	public boolean isBase(int x, int y){
-		return tileTab_[x + y*size_].isBase();
+	public boolean isBasePlayer(int x, int y){
+		return tileTab_[x + y*size_].isStar();
 	}
 
-	public int getComp(int x, int y){
-		return class_.classe(x,y);
+	public int getCompression(int x, int y){
+		return class_.classUnion(x,y);
 	}
 
 
-	public int getComp(int z){
-		return class_.classe(z%size_, z/size_);
+	public int getCompression(int num){
+		return class_.classUnion(num%size_, num/size_);
 	}
 
 
 	public void afficher(int x, int y){
-		System.out.println("Pere : "+class_.classe(x,y));
+		System.out.println("Les numéros de cases appartenant au père : " + class_.classUnion(x,y));
 
-		int t = getComp(x,y);
-		ArrayList<Integer> tmp = new ArrayList<Integer>();
-		tmp.addAll(class_.getTousFils(t%size_, t/size_));
-		for (int i = 0; i < tmp.size(); ++i) {
-			System.out.println(tmp.get(i));
+		int compression = getCompression(x,y);
+		int cmpt = 0;
+		ArrayList<Integer> tmpArray = new ArrayList<Integer>();
+		tmpArray.addAll(class_.getAllFils(compression%size_, compression/size_));
+		while(cmpt < tmpArray.size()){
+			System.out.print(", " + tmpArray.get(cmpt));
+			++cmpt;
 		}
+		System.out.println("=======================");		
 	}
+	
+	
 	//!\---------------------- Fin Getters
 
 
 	//!\brief Méthode n°2 afficheComposante
 	//!\param x, y : les coordonnées de la case dont pour laquelle la composante sera affiché
-	public void afficheComposante(int x, int y){
-
-		if (getValue(x, y) != 0) {
-
-			java.util.Timer t = new java.util.Timer();
-
-			int rac = getComp(x,y);
-			ArrayList<Integer> tmp = new ArrayList<Integer>();
-
-			// On ajoute toutes les Tiles de la composante dans un ArrayList temporaire
-			tmp.addAll(class_.getTousFils(rac%size_,rac/size_));
-			tmp.add(rac);
-
-			// Implémentation d'un timer afin de permettre un affichage en clignotement
-			class MonAction extends TimerTask {
-
-				int nbRep = 6;
-
-			    public void run() {
-			    	if(nbRep > 0){
-				    	for (int i = 0; i < tmp.size(); ++i) {
-				    		tileTab_[tmp.get(i)].colorerTemp();
-				    	}
-				     	--nbRep;
-				    }
-				    else
-				    	t.cancel();
-		      	}
-		    }
-
-		    // Appelle de la fonction pour le clignotement
-		    t.scheduleAtFixedRate(new MonAction(),0, 1000);
+	public void afficheComposante(int x, int y) throws Exception{
+		if(getVal(x, y) == 0){
+			throw new Exception("C'est la même case !");
 		}
+		int shortcut = getCompression(x,y);
+		ArrayList<Integer> tmpArray = new ArrayList<Integer>();
+		Timer timer = new Timer();			
+		tmpArray.addAll(class_.getTousFils(rac%size_,rac/size_));
+		tmpArray.add(shortcut);
+			
+		/*
+		* Création d'un timer pour beeps
+		*/
+		class CountingBeeps extends TimerTask {
+			static int nbRep_ = 0;
+		    public void run() {
+		    	++nbRep_;
+		    	if(nbRep >= 12){
+			    	timer.cancel();
+			    	timer.purge();
+			    	return;
+			    }
+			    	
+			    for (int i = 0; i < tmpArray.size(); ++i) {
+			    	if(tileTab_[tmpArray.get(i)]getBackground() != Color.yellow){
+			   			tileTab_[tmpArray.get(i)].coloTile("yellow");
+					}else if(tileTab_[tmpArray.get(i)].getTilePlayer()==1){
+						tileTab_[tmpArray.get(i)].coloTile("red");
+					}else if(tileTab_[tmpArray.get(i)].getTilePlayer()==2){
+						tileTab_[tmpArray.get(i)].coloTile("blue");
+					}
+								   	
+			   	}
+	   		}
+	   	}
+	    timer.scheduleAtFixedRate(new CountingBeeps(),0, 1000);
 	}
 
 
-	//!\brief Méthode n°3 existeCheminCase
+	//!\brief Méthode n°3 isTheSame
 	//!\param x, y, z, t : x et y les coordonnées de la première case; z et t les coordonnées de la seconde case
 	//!\return un booléen si les deux cases appartiennent à la même composante
-	public boolean existeCheminCases(int x, int y, int z, int t){
-		return (getComp(x, y) == getComp(z, t));
+	public boolean isTheSame(int x, int y, int z, int t){
+		return (getCompression(x, y) == getCompression(z, t));
 	}
 
 
@@ -512,7 +515,7 @@ class Grid extends JPanel {
 
 		// Pour tous les éléments de la composante on test si c'est une base et on incrément le compteur si c'est le cas
 		for (int i = 0; i < tmp.size(); ++i) {
-			if (isBase(tmp.get(i)%size_, tmp.get(i)/size_))
+			if (isBasePlayer(tmp.get(i)%size_, tmp.get(i)/size_))
 				compt++;
 		}
 
@@ -578,9 +581,9 @@ class Grid extends JPanel {
 				if (k == 0 && l == 0) 		
 					continue;
 
-				// Si la case adjacente est de la même couleur que la case actuelle et que l'ArrayList temporaire est vide, on ajoute la classe de la case adjacente dans l'ArrayList
+				// Si la case adjacente est de la même couleur que la case actuelle et que l'ArrayList temporaire est vide, on ajoute la classUnion de la case adjacente dans l'ArrayList
 				if (getValue(x+l, y+k) == c && tmp.size() == 0){
-					tmp.add(class_.classe(x+l, y+k));
+					tmp.add(class_.classUnion(x+l, y+k));
 					res.add((x+l)+(y+k)*size_);
 				}
 				// Sinon si la case adjacente est de la même couleur que la case actuelle alors...
@@ -590,13 +593,13 @@ class Grid extends JPanel {
 					// ... pour toutes les valeur de tmp...
 					for (int i = 0; i < tmp.size(); ++i) {
 
-						// ... on test si la classe de la case adjacente n'est pas déjà dedans, si ce n'est pas le cas on incrément le compteur et on ajoute sa classe dans tmp
-						if (existeCheminCases(x+l, y+k, tmp.get(i)%size_, tmp.get(i)/size_)){
+						// ... on test si la classUnion de la case adjacente n'est pas déjà dedans, si ce n'est pas le cas on incrément le compteur et on ajoute sa classUnion dans tmp
+						if (isTheSame(x+l, y+k, tmp.get(i)%size_, tmp.get(i)/size_)){
 							newComp = false;
 						}
 					}
 					if (newComp) {
-						tmp.add(class_.classe(x+l, y+k));
+						tmp.add(class_.classUnion(x+l, y+k));
 						res.add((x+l)+(y+k)*size_);
 					}
 				}
@@ -643,31 +646,5 @@ class Grid extends JPanel {
 		return Math.max(tmp1, tmp2) - 1;
 
 	}
-	
-
-	// A SUPPRIMER NORMALEMENT (aucune utilité, peut être pour IA enfaite)
-	public ArrayList<Integer> triTab(ArrayList<Integer> tab, int z, int t){
-
-		ArrayList<Integer> res = new ArrayList<Integer>();	
-
-		while(!tab.isEmpty()){
-
-			int min = size_;
-			int pos = 0;
-
-			for (int i = 0; i < tab.size(); ++i) {
-
-				if (distanceCase(tab.get(i)%size_, tab.get(i)/size_, z, t) < min) {
-					min = distanceCase(tab.get(i)%size_, tab.get(i)/size_, z, t);
-					pos = i;
-				}
-			}
-
-			res.add(tab.get(pos));
-			tab.remove(pos);
-		}
-
-		return res;
-	}
-
+		
 }
