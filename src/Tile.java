@@ -77,10 +77,10 @@ class Tile extends JPanel {
 		this.tilePlayer_ = tilePlayer;
 		
 		if (tilePlayer == 1){
-			setBackground(Color.blue);
+			colorerCase("red");
 			//setPreferredSize(new Dimension(25,25));
 		}else if(tilePlayer == 2){
-			setBackground(Color.red);
+			colorerCase("blue");
 			//setPreferredSize(new Dimension(25,25));
 		}		
 	}
@@ -117,7 +117,7 @@ class Tile extends JPanel {
 		add(symbol);
 	}
 
-	public void colorTile(String color){
+	public void colorerCase(String color){
 		if(color.equals("yellow")){
 			setBackground(Color.yellow);
 		}

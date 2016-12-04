@@ -10,7 +10,7 @@ import java.lang.Exception;
 * Le programme Grid implémente le plateau composé de cases (ou Tile)
 * Elle traite aussi la création graphique de la grille
 * <p>
-* Comme attribut elle a un entier de Tile tiletileTab_
+* Comme attribut elle a un entier de Tile tileTab_
 * Une class union class_, un ArrayList en entier des cases bases (étoiles) des deux joueurs
 * et deux entiers donnant la taille du grid carrée 
 *et sa dimension pour son affichage graphique
@@ -22,7 +22,7 @@ import java.lang.Exception;
 class Grid extends JPanel {
 
 	
-	private Tile tiletileTab_[];
+	private Tile tileTab_[];
 	private UnionClass class_;	
 	private ArrayList<Integer> playerBase1;
 	private ArrayList<Integer> playerBase2;		
@@ -169,10 +169,6 @@ class Grid extends JPanel {
 		}		
 	}
 
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////CONTINUE HERE///////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//!\---------------------- Getters
 
 	public int getTaille(){
@@ -268,239 +264,81 @@ class Grid extends JPanel {
 	}
 
 
-	//!\brief Méthode n°3 isTheSame
+	//!\brief Méthode n°3 existeCheminCases
 	//!\param x, y, z, t : x et y les coordonnées de la première case; z et t les coordonnées de la seconde case
 	//!\return un booléen si les deux cases appartiennent à la même composante
-	public boolean isTheSame(int x, int y, int z, int t){
+	public boolean existeCheminCases(int x, int y, int z, int t){
 		return (getCompression(x, y) == getCompression(z, t));
 	}
 
 
-	//!\brief Méthode n°4 relieCaseMin
+	//!\brief Méthode n°4 relierCasesMin
 	//!\param x, y, z, t : x et y les coordonnées de la première case; z et t les coordonnées de la seconde case;
-	//!\return compt : le nombre minimum de cases blanche à colorié afin de rejoindre les deux cases. Retourne -1 si les deux cases sont d'une couleur différente
-	public int relieCaseMin(int x, int y, int z, int t){
-
-		int xDep = 0;
-		int yDep = 0;
-		int xArr = 0;
-		int yArr = 0;
-		int compt = 0;
-
-		// On vérifie si les deux cases ont la même couleur 
-		if(getValue(x, y) == getValue(z, t)){
-
-			ArrayList<Integer> caseImp = new ArrayList<Integer>();		// ArrayList permettant d'éviter de retourner sur une case déjà étudié
-			ArrayList<Integer> caseWait = new ArrayList<Integer>();		// ArrayList de stockage de cases disponibles pour le tour en cours
-			ArrayList<Integer> caseAcc = new ArrayList<Integer>();		// ArrayList de stockage des cases disponibles pour le tour suivant
-
-			caseAcc.add(x+y*size_);
-			caseWait.add(x+y*size_);
-			caseImp.add(x+y*size_);
-			
-			for (int v = 0; v < size_*size_; ++v) {						
-
-				caseWait.clear();
-				caseWait.addAll(caseAcc);
-				caseAcc.clear();
-
-				for (int a = 0; a < caseWait.size(); ++a) {
-
-
-					int xTmp = caseWait.get(a)%size_;
-					int yTmp = caseWait.get(a)/size_;
-
-					// Pour chaque case on attribu des valeurs différentes pour la double boucle à suivre afin d'éviter
-					// que le programme essaye d'effectuer ses test sur des cases extérieurs au tableau (-1 par exemple)
-					if (xTmp == 0){
-						if( yTmp == 0){
-							xDep = 0; yDep = 0; xArr = 1; yArr = 1;
-						}
-						else if(yTmp == size_ - 1){
-							xDep = 0; yDep = -1; xArr = 1; yArr = 0;
-						}
-						else {
-							xDep = 0; yDep = -1; xArr = 1; yArr = 1;
-						}
-					}
-					else if (xTmp == size_ - 1){
-						if( yTmp == 0){
-							xDep = -1; yDep = 0; xArr = 0; yArr = 1;
-						}
-						else if(yTmp == size_ - 1){
-							xDep = -1; yDep = -1; xArr = 0; yArr = 0;
-						}
-						else {
-							xDep = -1; yDep = -1; xArr = 0; yArr = 1;
-						}
-					}
-					else{
-						if( yTmp == 0){
-							xDep = -1; yDep = 0; xArr = 1; yArr = 1;
-						}
-						else if(yTmp == size_-1){
-							xDep = -1; yDep = -1; xArr = 1; yArr = 0;
-						}
-						else {
-							xDep = -1; yDep = -1; xArr = 1; yArr = 1;
-						}
-					}
-
-					// Double boucle qui permet de tester toutes les cases adjacentes à la case actuelle
-					for (int i = yDep; i <= yArr; ++i) {
-						for (int j = xDep; j <= xArr; ++j){
-
-							// Si c'est la case actuelle on la passe (aucun intérêt à la tester)
-							if (i == 0 && j == 0) 
-								continue;
-
-							// Si c'est une case blanche alors...
-							if (getValue(xTmp+j, yTmp+i) == 0){
-
-								// Si elle est adjacente à la case d'arriver on retourne le compteur+1
-								if (distanceCase(xTmp+j, yTmp+i, z, t) == 0)
-										return ++compt;
-
-								// Si elle n'appartient pas au cases imposibles on l'ajoute dans le tableau de case pour le tour suivant ainsi qu'au tableau de cases impossible
-								if (!caseImp.contains(((xTmp+j)+(yTmp+i)*size_))){
-									caseAcc.add(((xTmp+j)+(yTmp+i)*size_));
-									caseImp.add(((xTmp+j)+(yTmp+i)*size_));
-								}
-							}
-							// ...sinon si elle est de la même couleur que la case actuelle alors...
-							else if (getValue(xTmp+j, yTmp+i) == getValue(x, y)) {
-
-
-								// Si elle n'appartient pas aux cases impossibles alors...
-								if (!caseImp.contains((xTmp+j)+(yTmp+i)*size_)) {
-
-									ArrayList<Integer> tabComp = new ArrayList<Integer>();
-
-									// On ajoute d'en un tableau temporaires tous les éléments de la composante dont elle fait partie
-									int pereComp = getComp((xTmp+j),(yTmp+i));
-									tabComp.addAll(class_.getTousFils(pereComp%size_, pereComp/size_));
-									tabComp.add(pereComp);
-
-									int xDep2 = 0;
-									int yDep2 = 0;
-									int xArr2 = 0;
-									int yArr2 = 0;
-									int xTmp2 = 0;
-									int yTmp2 = 0;
-
-									// On vérifie que la case d'arrivé n'appartient pas à la composante
-									for (int f = 0; f < tabComp.size(); ++f) {
-
-										xTmp2 = tabComp.get(f)%size_;
-										yTmp2 = tabComp.get(f)/size_;
-
-										// Si c'est le cas on retourne le compteur
-										if (distanceCase(xTmp2, yTmp2, z, t) == -1)
-											return compt;
-									}
-
-									// Sinon pour chaque case de la composante...
-									for (int f = 0; f < tabComp.size(); ++f) {
-
-										xTmp2 = tabComp.get(f)%size_;
-										yTmp2 = tabComp.get(f)/size_;
-
-										// ...on attribu des valeurs différentes pour la double boucle à suivre afin d'éviter
-										// que le programme essaye d'effectuer ses test sur des cases extérieurs au tableau (-1 par exemple)
-										if (xTmp2 == 0){
-											if( yTmp2 == 0){
-												xDep2 = 0; yDep2 = 0; xArr2 = 1; yArr2 = 1;
-											}
-											else if(yTmp2 == size_ - 1){
-												xDep2 = 0; yDep2 = -1; xArr2 = 1; yArr2 = 0;
-											}
-											else {
-												xDep2 = 0; yDep2 = -1; xArr2 = 1; yArr2 = 1;
-											}
-										}
-										else if (xTmp2 == size_ - 1){
-											if( yTmp+i == 0){
-												xDep2 = -1; yDep2 = 0; xArr2 = 0; yArr2 = 1;
-											}
-											else if(yTmp2 == size_ - 1){
-												xDep2 = -1; yDep2 = -1; xArr2 = 0; yArr2 = 0;
-											}
-											else {
-												xDep2 = -1; yDep2 = -1; xArr2 = 0; yArr2 = 1;
-											}
-										}
-										else{
-											if( yTmp2 == 0){
-												xDep2 = -1; yDep2 = 0; xArr2 = 1; yArr2 = 1;
-											}
-											else if(yTmp2 == size_-1){
-												xDep2 = -1; yDep2 = -1; xArr2 = 1; yArr2 = 0;
-											}
-											else {
-												xDep2 = -1; yDep2 = -1; xArr2 = 1; yArr2 = 1;
-											}
-										}
-
-										// Double boucle qui permet de tester toutes les cases adjacentes à toutes les cases de la composante
-										for (int i2 = yDep2; i2 <= yArr2; ++i2) {
-											for (int j2 = xDep2; j2 <= xArr2; ++j2){
-
-												// Si ce n'est pas la case actuelle de la composante alors...
-												if (i2 != 0 || j2 != 0) {
-
-													// Si c'est une case blanche alors...
-													if (getValue(xTmp2+j2, yTmp2+i2) == 0){
-
-														// Si elle est adjacente à la case d'arriver on retourne le compteur+1
-														if(distanceCase(xTmp2+j2, yTmp2+i2, z, t) == 0)
-															return ++compt;
-
-														// Sinon si elle n'appartient pas au cases imposibles on l'ajoute dans le tableau de case pour le tour suivant ainsi qu'au tableau de cases impossible
-														if (!caseImp.contains(((xTmp2+j2)+(yTmp2+i2)*size_))){
-															caseAcc.add(((xTmp2+j2)+(yTmp2+i2)*size_));
-															caseImp.add(((xTmp2+j2)+(yTmp2+i2)*size_));
-														}
-													}
-													// Sinon si c'est une case de couleur adverse on l'ajoute au tableau de case impossible (si elle n'y est pas déjà)
-													else if (getValue(xTmp2+j2, yTmp2+i2) != getValue(x, y)){
-
-														if (!caseImp.contains(((xTmp+j2)+(yTmp+i2)*size_)))
-															caseImp.add(((xTmp2+j2)+(yTmp2+i2)*size_));
-													}
-												}
-												// Sinon c'est la case actuelle de la composante donc on l'ajoute directement aux case impossibles
-												else{
-													if (!caseImp.contains(((xTmp2+j2)+(yTmp2+i2)*size_))){
-														caseImp.add(((xTmp2+j2)+(yTmp2+i2)*size_));
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-							//Sinon c'est une case de couleur adverse donc on l'ajoute au tableau des cases impossibles (si elle n'y est pas déjà)
-							else{
-								if (!caseImp.contains(((xTmp+j)+(yTmp+i)*size_))){
-									caseImp.add(((xTmp+j)+(yTmp+i)*size_));
-								}
-							}
-						}
-					}
-					// Si le tableau pour le tour suivant est vide c'est que la case est bloqué dans un coin, donc on l'ajoute au tableau des cases impossibles
-					if (caseAcc.isEmpty()){
-						caseImp.add((xTmp+yTmp*size_));
-					}
-				}
-				// Pour finir on incrémente le compteur à la fin du tour
-				++compt;
-			}
-		}
-		// Sinon les deux cases ne sont pas de la même couleur, ou bien il n'y a pas de passage possible entre les deux cases donc on retourne -1
-		return -1;
+	//!\return compt_ : le nombre minimum de cases blanche à colorié afin de rejoindre les deux cases.
+	public int relierCasesMin(int x1, int y1, int x2, int y2){
+		int res = 0;
+		return pathfind(x1, y1, x2, y2, res);
 	}
 	
+	public int pathfind(int xdeb, int ydeb, int xarr, int yarr, int res){
+		int result = res;
+		/*
+		*	Si on compare deux cases identiques et cond d'arret
+		*/
+		if((xdeb == xarr)&&(ydeb == yarr)){
+			return result;
+		}else{
+			/*
+			*	Si tileDeb se trouve au SW de tileArr
+			*/
+			if(((xarr - xdeb)>0) && ((yarr - ydeb)>0)){
+				++xdeb;
+				++ydeb;
+				++res;
+				
+			/*
+			*	Si tileDeb se trouve au NE de tileArr
+			*/
+			}else if (((xarr - xdeb)<0) && ((yarr - ydeb)<0)){
+				--xdeb;
+				--ydeb;
+				++res;	
 
+			/*
+			*	Si tileDeb se trouve au Nord de tileArr
+			*/				
+			}else if (((xarr - xdeb) == 0) && ((yarr - ydeb)<0)){
+				--ydeb;
+				++res;	
+			/*
+			*	Si tileDeb se trouve au Sud de tileArr
+			*/					
+			}else if (((xarr - xdeb) == 0) && ((yarr - ydeb)>0)){
+				++ydeb;
+				++res;
+				
+			/*
+			*	Si tileDeb se trouve a l'Ouest de tileArr
+			*/	
+			}else if (((xarr - xdeb)>0) && ((yarr - ydeb)==0)){
+				++xdeb;
+				++res;
+				
+			/*
+			*	Si tileDeb se trouve a l'Est de tileArr
+			*/		
+			}else if (((xarr - xdeb)<0) && ((yarr - ydeb)==0)){
+				--xdeb;
+				++res;
+			}
+			pathfind(xdeb, ydeb, xarr, yarr, res);
+		}
+	}
+	
+	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////CONTINUE HERE///////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//!\brief Méthode n°5 nombreEtoiles
 	//!\param x, y : les coordonnées de la case pour laquelle on veut connaitre le nombre de bases appartenant à sa composante
 	//!\return un entier étant le nombre de base appartenant à la composante
@@ -531,51 +369,51 @@ class Grid extends JPanel {
 		ArrayList<Integer> tmp = new ArrayList<Integer>();
 		ArrayList<Integer> res = new ArrayList<Integer>();
 
-		int xDep = 0;
-		int yDep = 0;
-		int xArr = 0;
-		int yArr = 0;
+		int xstock1 = 0;
+		int ystock1 = 0;
+		int xstock2 = 0;
+		int ystock2 = 0;
 
 
 		// On attribu des valeurs différentes pour la double boucle à suivre afin d'éviter
 		// que le programme essaye d'effectuer ses test sur des cases extérieurs au tableau (-1 par exemple)
 		if (x == 0){
 			if( y == 0){
-				xDep = 0; yDep = 0; xArr = 1; yArr = 1;
+				xstock1 = 0; ystock1 = 0; xstock2 = 1; ystock2 = 1;
 			}
 			else if(y == size_ - 1){
-				xDep = 0; yDep = -1; xArr = 1; yArr = 0;
+				xstock1 = 0; ystock1 = -1; xstock2 = 1; ystock2 = 0;
 			}
 			else {
-				xDep = 0; yDep = -1; xArr = 1; yArr = 1;
+				xstock1 = 0; ystock1 = -1; xstock2 = 1; ystock2 = 1;
 			}
 		}
 		else if (x == size_ - 1){
 			if( y == 0){
-				xDep = -1; yDep = 0; xArr = 0; yArr = 1;
+				xstock1 = -1; ystock1 = 0; xstock2 = 0; ystock2 = 1;
 			}
 			else if(y == size_ - 1){
-				xDep = -1; yDep = -1; xArr = 0; yArr = 0;
+				xstock1 = -1; ystock1 = -1; xstock2 = 0; ystock2 = 0;
 			}
 			else {
-				xDep = -1; yDep = -1; xArr = 0; yArr = 1;
+				xstock1 = -1; ystock1 = -1; xstock2 = 0; ystock2 = 1;
 			}
 		}
 		else{
 			if( y == 0){
-				xDep = -1; yDep = 0; xArr = 1; yArr = 1;
+				xstock1 = -1; ystock1 = 0; xstock2 = 1; ystock2 = 1;
 			}
 			else if(y == size_-1){
-				xDep = -1; yDep = -1; xArr = 1; yArr = 0;
+				xstock1 = -1; ystock1 = -1; xstock2 = 1; ystock2 = 0;
 			}
 			else {
-				xDep = -1; yDep = -1; xArr = 1; yArr = 1;
+				xstock1 = -1; ystock1 = -1; xstock2 = 1; ystock2 = 1;
 			}
 		}
 
 		// Double boucle qui permet de tester toutes les cases adjacentes la case actuelle
-		for (int k = yDep; k <= yArr; ++k) {
-			for (int l = xDep; l <= xArr;  ++l) {
+		for (int k = ystock1; k <= ystock2; ++k) {
+			for (int l = xstock1; l <= xstock2;  ++l) {
 
 				// Si c'est la case actuelle on la passe (aucun intérêt à la tester)
 				if (k == 0 && l == 0) 		
@@ -594,7 +432,7 @@ class Grid extends JPanel {
 					for (int i = 0; i < tmp.size(); ++i) {
 
 						// ... on test si la classUnion de la case adjacente n'est pas déjà dedans, si ce n'est pas le cas on incrément le compteur et on ajoute sa classUnion dans tmp
-						if (isTheSame(x+l, y+k, tmp.get(i)%size_, tmp.get(i)/size_)){
+						if (existeCheminCases(x+l, y+k, tmp.get(i)%size_, tmp.get(i)/size_)){
 							newComp = false;
 						}
 					}
