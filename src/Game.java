@@ -5,15 +5,16 @@ import java.awt.*;
 import javax.swing.*;
 import java.*;
 import java.util.*;
+import java.lang.String;
 
 
 /**
  * Classe dont les instances sont des fenêtres graphiques
  * dérivées de JFrame.
  */
-class FenetreJeu extends JFrame{
+class Game extends JFrame{
 
-	private Grille grille;
+	private Grid grille;
 	private JPanel menu;
 	private JLabel affScoreJ1, affScoreJ2;
 	private JButton b1, b2, b3, b4, b5, b6, b7, b8, b9, b10;
@@ -21,16 +22,16 @@ class FenetreJeu extends JFrame{
 	private ArrayList<Integer> listeCoup, evaluer;
 	private boolean vJ1, vJ2;
 
-	public FenetreJeu(String titre, int nbB, int t, int c) {
+	public Game(String titre, int nbB, int t, int c) {
 
 		//------------------------------------------------------------------- Instanciation de la fenêtre principale et de son contenu
 		super(titre);
-		grille = new Grille(t, nbB);
+		grille = new Grid(t, nbB);
 		menu = new JPanel();
 		scoreJ1 = 0;
 		scoreJ2 = 0;
-		affScoreJ1 = new JLabel("Score joueur 1 : "+ scoreJ1);
-		affScoreJ2 = new JLabel("Score joueur 2 : "+ scoreJ2);
+		affScoreJ1 = new JLabel("Score Player 1 : "+ scoreJ1);
+		affScoreJ2 = new JLabel("Score Player 2 : "+ scoreJ2);
 		joueur = 1;
 		nbBase = nbB;
 		taille = t;
@@ -77,8 +78,7 @@ class FenetreJeu extends JFrame{
 		    				suppr();
 		    				if (choix == 1) 
 		    					joueDeuxHumains();
-		    				else if(choix == 2)
-		    					joueOrdiHumain();
+
 		    				
 		        		}
 		        });
@@ -91,12 +91,11 @@ class FenetreJeu extends JFrame{
 				suppr();
 				grille.addMouseListener(new MouseAdapter(){
 		        		public void mousePressed(MouseEvent e){
-		    				System.out.println(grille.getComp((e.getX()-1)/50, (e.getY()-1)/50));
+		    				System.out.println(grille.getCompression((e.getX()-1)/50, (e.getY()-1)/50));
 		    				suppr();
 		    				if (choix == 1) 
 		    					joueDeuxHumains();
-		    				else if(choix == 2)
-		    					joueOrdiHumain();
+
 		    				
 		        		}
 		        });
@@ -109,13 +108,11 @@ class FenetreJeu extends JFrame{
 				suppr();
 				grille.addMouseListener(new MouseAdapter(){
 		        		public void mousePressed(MouseEvent e){
-		    				System.out.println(grille.getVal((e.getX()-1)/50, (e.getY()-1)/50));
+		    				System.out.println(grille.getValue((e.getX()-1)/50, (e.getY()-1)/50));
 		    				suppr();
 		    				if (choix == 1) 
 		    					joueDeuxHumains();
-		    				else if(choix == 2)
-		    					joueOrdiHumain();
-		    				
+   				
 		        		}
 		        });
 			}
@@ -131,8 +128,8 @@ class FenetreJeu extends JFrame{
 		    				suppr();
 		    				if (choix == 1) 
 		    					joueDeuxHumains();
-		    				else if(choix == 2)
-		    					joueOrdiHumain();
+		    				//else if(choix == 2)
+		    					//joueOrdiHumain();
 		    				
 		        		}
 		        });
@@ -152,12 +149,12 @@ class FenetreJeu extends JFrame{
     						++compt;
     					}
     					else{
-    						System.out.println(grille.distanceCase(posTmpX, posTmpY, (e.getX()-1)/50, (e.getY()-1)/50));
+    						System.out.println(grille.distanceCases(posTmpX, posTmpY, (e.getX()-1)/50, (e.getY()-1)/50));
 							suppr();
 							if (choix == 1)
 								joueDeuxHumains();
-							else if(choix == 2)
-								joueOrdiHumain();
+							//else if(choix == 2)
+								//joueOrdiHumain();
 							--compt;
     					}
 	    			}
@@ -174,7 +171,7 @@ class FenetreJeu extends JFrame{
 		        		public void mousePressed(MouseEvent e){
 
 		        			ArrayList<Integer> tmp = new ArrayList<Integer>();
-		        			tmp.addAll(grille.relieComposantes((e.getX()-1)/50, (e.getY()-1)/50, joueur));
+		        			tmp.addAll(grille.relieComposantesProxy((e.getX()-1)/50, (e.getY()-1)/50, joueur));
 		        			System.out.println(tmp.size() + " : le nombre de composante reliables");
 		        			for (int i = 0; i < tmp.size(); ++i) {
 		        				System.out.print(tmp.get(i) + " ");
@@ -182,8 +179,8 @@ class FenetreJeu extends JFrame{
 		    				suppr();
 		    				if (choix == 1) 
 		    					joueDeuxHumains();
-		    				else if(choix == 2)
-		    					joueOrdiHumain();
+		    				//else if(choix == 2)
+		    				//	joueOrdiHumain();
 		    				
 		        		}
 		        });
@@ -206,8 +203,8 @@ class FenetreJeu extends JFrame{
 								suppr();
 								if (choix == 1)
 									joueDeuxHumains();
-								else if(choix == 2)
-									joueOrdiHumain();
+							//	else if(choix == 2)
+									//joueOrdiHumain();
 								--compt;
 	    					}
 		        		}
@@ -219,7 +216,7 @@ class FenetreJeu extends JFrame{
         b8.addActionListener(new ActionListener(){
         	public void actionPerformed(ActionEvent a){
 
-        		JFrame aband = new JFrame("Tentatived'abandon de la part du joueur n°"+(joueur == 1 ? 1 : 2)+"(c'est lache, très lache)");
+        		JFrame aband = new JFrame("Le joueur n°"+(joueur == 1 ? 1 : 2) + "a voulu arrêter de jouer !");
 
 				aband.setSize(600,100);
 				aband.setLocationRelativeTo(null);
@@ -232,7 +229,7 @@ class FenetreJeu extends JFrame{
 					public void actionPerformed(ActionEvent arg0) {
 						dispose();
 						aband.dispose();
-						FenetreMenu newF = new FenetreMenu();
+						Menu newF = new Menu();
 					}
 				});
 
@@ -258,12 +255,12 @@ class FenetreJeu extends JFrame{
 	    						++compt;
 	    					}
 	    					else{
-	    						System.out.println(grille.relieCaseMin(posTmpX, posTmpY, (e.getX()-1)/50, (e.getY()-1)/50));
+	    						System.out.println(grille.relierCasesMin(posTmpX, posTmpY, (e.getX()-1)/50, (e.getY()-1)/50));
 								suppr();
 								if (choix == 1)
 									joueDeuxHumains();
-								else if(choix == 2)
-									joueOrdiHumain();
+								//else if(choix == 2)
+									//joueOrdiHumain();
 								--compt;
 	    					}
 		        		}
@@ -281,8 +278,8 @@ class FenetreJeu extends JFrame{
 		    				suppr();
 		    				if (choix == 1) 
 		    					joueDeuxHumains();
-		    				else if(choix == 2)
-		    						joueOrdiHumain();
+		    				//else if(choix == 2)
+		    						//joueOrdiHumain();
 		        		}
 		        });
 			}
@@ -338,32 +335,37 @@ class FenetreJeu extends JFrame{
 		if (choix == 1) {
 			joueDeuxHumains();
 		}
-		else if (choix == 2) {
-			joueOrdiHumain();
-		}
+		//else if (choix == 2) {
+			//joueOrdiHumain();
+		//}
 	}
 
-	// ------------------------------------------ Méthodes Demandées
 
-	//!\brief Méthode n°6 afficheScores
+	/*
+	* @brief afficher score, méthode qui affiche le score entre les deux joueurs
+	*/
 	public void afficheScores(){
-
-		affScoreJ1.setText("Score joueur 1 : "+ scoreJ1);
-		affScoreJ2.setText("Score joueur 2 : "+ scoreJ2);
+		affScoreJ1.setText("Score Player 1 : "+ scoreJ1);
+		affScoreJ2.setText("Score Player2 : "+ scoreJ2);
 	}
 
 
 	//!\brief Méthode n°8 joueDeuxHumains
 	public void joueDeuxHumains(){
 		grille.addMouseListener(new MouseAdapter(){
-    		public void mousePressed(MouseEvent e){		 
-
-    			if (grille.getCellSouris(e.getX(),e.getY()).colorerCase(joueur)){								// colorerCase() s'effectue dans testVal()
-
+    		public void mousePressed(MouseEvent e){	
+    			int valueTile = grille.getTileSmall(e.getX(),e.getY()).getTilePlayer();
+    			if (valueTile == 0 && (joueur == 1 || joueur == 2)){
+    				if(joueur == 1){
+    					grille.getTileSmall(e.getX(),e.getY()).colorerCase("red");
+    				}else if(joueur == 2){
+    					grille.getTileSmall(e.getX(),e.getY()).colorerCase("blue");
+    				}
+					
     				listeCoup.add((e.getX()-1)/50+((e.getY()-1)/50)*taille);
 
     				ArrayList<Integer> tmp = new ArrayList<Integer>();
-    				tmp.addAll(grille.relieComposantes((e.getX()-1)/50, (e.getY()-1)/50, joueur));
+    				tmp.addAll(grille.relieComposantesProxy((e.getX()-1)/50, (e.getY()-1)/50, joueur));
 
     				for (int i = 0; i < tmp.size(); ++i)
     					grille.union((e.getX()-1)/50, (e.getY()-1)/50, tmp.get(i)%taille, tmp.get(i)/taille);
@@ -411,25 +413,25 @@ class FenetreJeu extends JFrame{
         					public void actionPerformed(ActionEvent arg0) {
         						dispose();
         						fin.dispose();
-        						FenetreMenu newF = new FenetreMenu();
+        						Menu newF = new Menu();
         					}
         				});
         				fin.add(bouton);
         			}
         			else if(listeCoup.size() == taille*taille - nbBase*2){
-        				JFrame fin = new JFrame("Hum....");
+        				JFrame fin = new JFrame("...");
 
         				fin.setSize(400,100);
         				fin.setLocationRelativeTo(null);
         				fin.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);   
         				fin.setVisible(true);
 
-        				JButton bouton = new JButton("Et bien il semble que ce soit un match nul !");
+        				JButton bouton = new JButton("Oops, on a un match nul !");
         				bouton.addActionListener(new ActionListener(){
         					public void actionPerformed(ActionEvent arg0) {
         						dispose();
         						fin.dispose();
-        						FenetreMenu newF = new FenetreMenu();
+        						Menu newF = new Menu();
         					}
         				});
         				fin.add(bouton);
@@ -452,143 +454,10 @@ class FenetreJeu extends JFrame{
     		}
    		});
 	}
-	
-	
-	public void joueOrdiHumain(){
 
-		grille.addMouseListener(new MouseAdapter(){
-    		public void mousePressed(MouseEvent e){		 
-
-    			if (grille.getCellSouris(e.getX(),e.getY()).colorerCase(1)){								// colorerCase() s'effectue dans testVal()
-
-    				listeCoup.add((e.getX()-1)/50+((e.getY()-1)/50)*taille);
-
-    				ArrayList<Integer> tmp = new ArrayList<Integer>();
-    				tmp.addAll(grille.relieComposantes((e.getX()-1)/50, (e.getY()-1)/50, 1));
-
-    				for (int i = 0; i < tmp.size(); ++i)
-    					grille.union((e.getX()-1)/50, (e.getY()-1)/50, tmp.get(i)%taille, tmp.get(i)/taille);
-
-
- 					int scoreTmp = grille.nombreEtoiles((e.getX()-1)/50, (e.getY()-1)/50);
-
-    				if(scoreTmp > 1 && scoreTmp > scoreJ1){
-    					scoreJ1 = scoreTmp;
-
-    					afficheScores();
-
-    					if (scoreJ1 > scoreJ2) {
-    						vJ1 = true;
-    						vJ2 = false;
-    					}
-    				}
-    				++joueur;
-
-    				int coupOrdi = trouverCase1(2);
-
-    				grille.getCell(coupOrdi).colorerCase(2);
-
-	   				listeCoup.add(coupOrdi);
-
-	   				tmp.clear();
-	   				tmp = grille.relieComposantes(coupOrdi%taille, coupOrdi/taille, 2);
-
-	   				for (int i = 0; i < tmp.size(); ++i)
-	   					grille.union(coupOrdi%taille, coupOrdi/taille, tmp.get(i)%taille, tmp.get(i)/taille);
-
-					scoreTmp = grille.nombreEtoiles(coupOrdi%taille, coupOrdi/taille);
-
-	   				if(scoreTmp > 1 && scoreTmp > scoreJ2){
-	   					scoreJ2 = scoreTmp;
-
-	   					afficheScores();
-
-	   					if (scoreJ2 > scoreJ1) {
-	   						vJ1 = false;
-	   						vJ2 = true;
-	   					}
-	   				}
-	   				--joueur;
-
-    			}
-	    		else{
-	    			JFrame fenetre = new JFrame("Erreur");
-
-					fenetre.setSize(200,100);
-					fenetre.setLocationRelativeTo(null);
-					fenetre.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);   
-					fenetre.setVisible(true);
-					fenetre.setAlwaysOnTop(true);
-					setEnabled(false);
-
-					JButton bouton = new JButton("La case est déjà coloré !");
-					bouton.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent arg0) {fenetre.dispose(); setEnabled(true);}});
-					fenetre.add(bouton);
-				}
-
-
-    			if (scoreJ1 == nbBase || scoreJ2 == nbBase || ((listeCoup.size() == taille*taille - nbBase*2) && (scoreJ1 != 0 || scoreJ2 != 0))) {
-
-    				JFrame fin = new JFrame("Bravo !!");
-
-    				fin.setSize(400,100);
-    				fin.setLocationRelativeTo(null);
-    				fin.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);   
-    				fin.setVisible(true);
-
-    				JButton bouton = new JButton("Bravo le joueur n°"+(vJ1 ? 1 : 2) +" a remporté la partie !");
-    				bouton.addActionListener(new ActionListener(){
-    					public void actionPerformed(ActionEvent arg0) {
-    						dispose();
-    						fin.dispose();
-    						FenetreMenu newF = new FenetreMenu();
-    					}
-    				});
-    				fin.add(bouton);
-    			}
-    			else if(listeCoup.size() == taille*taille - nbBase*2){
-    				JFrame fin = new JFrame("Hum....");
-
-    				fin.setSize(400,100);
-    				fin.setLocationRelativeTo(null);
-    				fin.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);   
-    				fin.setVisible(true);
-
-    				JButton bouton = new JButton("Et bien il semble que ce soit un match nul !");
-    				bouton.addActionListener(new ActionListener(){
-    					public void actionPerformed(ActionEvent arg0) {
-    						dispose();
-    						fin.dispose();
-    						FenetreMenu newF = new FenetreMenu();
-    					}
-    				});
-    				fin.add(bouton);
-    			}
-        	}
-   		});
-	}
-
-	// ------------------------------------------ Méthodes supplémentairess
-
-	//!\ Permet de supprimer le MouseListener actuel si il en existe un
 	public void suppr(){
 		MouseListener m[] = grille.getMouseListeners(); 
 		if(m.length > 0)
 			grille.removeMouseListener(m[0]);
-	}
-
-	//!\ Permet à l'ordinateur de trouver la case la plus pertinante à jouer selon evaluerCase1
-	public int trouverCase1(int j){
-
-		int index = -1;
-		int valTmp = taille;
-
-		for(int i = 0; i < taille*taille; ++i){
-			if(grille.evaluerCase1(i%taille, i/taille, j) < valTmp){
-				valTmp = grille.evaluerCase1(i%taille, i/taille, j);
-				index = i;
-			}
-		}
-		return index;	
 	}
 }

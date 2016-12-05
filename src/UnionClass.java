@@ -1,81 +1,96 @@
 import java.util.*;
+import java.lang.Exception;
+
+/*
+* <h1>UnionClass</h1>
+* Le programme qui gere les class unions
+* <p>
+* Comme attribut elle a un ArrayList de noeud appelé union_ 
+* Un entier size_ retournant la taille
+*
+* @file UnionClass.java
+* @copyright WTFPL v2
+* @author Elbert NYUNTING, Félix PINEL
+*/
 
 class UnionClass{
 	
-	private ArrayList<Indice> classUnion_;
-	private int taille_;
+	private ArrayList<Noeud> union_;
+	private int size_;
 
+	/*
+	* @brief Constructeur de UnionClass
+	* @param int size donnant la taille de UnionClass
+	* @see On ajoute size² noeuds comme il y a t² cases dans une grille de taille size
+	*/ 
+	public UnionClass(int size){
 
-	//!\ Constructeur de la UnionClass
-	public UnionClass(int t){
+		this.size_ = size;
+		this.union_ = new ArrayList<Noeud>();
 
-		//!\ Initialisation des variables
-		taille_ = t;
-		classUnion_ = new ArrayList<Indice>();
-
-		for (int x = 0; x < taille_*taille_; ++x) {
-			classUnion_.add(new Indice());
+		for (int x = 0; x < size_*size_; ++x) {
+			this.union_.add(new Noeud());
 		}
 	}
+	/*
+	*	@brief getter de Taille, retourne size_;
+	*/
+	public int getSize(){return size_;}
 
-
-	//!\ Méthode d'union de la composante contenant la case de coordonnée (x1,y1) avec la composante contenant la case de coordonnée (x2, y2) par union pondérée
-	public void union(int x1, int y1, int x2, int y2){ 
-
-		int vRac = classUnion(x1,y1);
-		int wRac = classUnion(x2,y2);
-		int tv = getAllFils(vRac%taille_, vRac/taille_).size();
-		int tw = getAllFils(wRac%taille_, wRac/taille_).size();
-
-
-		if (vRac != wRac) {
-			if (tv <= tw) {
-				classUnion_.get(vRac).setPere(wRac);
-				classUnion_.get(wRac).ajouterFils(vRac);
-			}
-			else{
-				classUnion_.get(wRac).setPere(vRac);
-				classUnion_.get(vRac).ajouterFils(wRac);
-			}
-		}
-
-	}
-
-
-	//!\ Méthode retournant la classUnion d'une case de coordonnée (x, y) avec compression des chemins
-	public int classUnion(int x, int y){
-		if (classUnion_.get(x+y*taille_).getPere() == -1)
-			return (x+y*taille_);
-		else{	
-			int a = classUnion(classUnion_.get(x+y*taille_).getPere()%taille_, classUnion_.get(x+y*taille_).getPere()/taille_);
-			classUnion_.get(x+y*taille_).setPere(a);
-			return a;	
-		}
-	}
-
-
-	//!\---------------------- Getters
-	public int getTaille(){
-
-		return taille_;
-	}
-
-	//!\ Permet d'obtenir tous les fils d'un Indice de la UnionClass (cette fonction est généralement appelé sur la racine)
+	/*
+	*	@brief parcours récursif pour obtenir tous les fils d'un noeud d'une case dont les coordonnées sont données au paramètre
+	*/
 	public ArrayList<Integer> getAllFils(int x, int y){
 		
-		int t = classUnion_.get(x+y*taille_).getFils().size();
+		int size = union_.get(x+y*size_).getFils().size();
 
-		if (t == 0)
-			return (new ArrayList<Integer>());
-
-		else{
+		if(size != 0){
 			ArrayList<Integer> tmp = new ArrayList<Integer>();
-			tmp.addAll(classUnion_.get(x+y*taille_).getFils());
-			for (int i = 0; i < t; ++i)
-				tmp.addAll(getAllFils(tmp.get(i)%taille_, tmp.get(i)/taille_));
+			tmp.addAll(union_.get(x+y*size_).getFils());
+			for (int i = 0; i < size; ++i)
+				tmp.addAll(getAllFils(tmp.get(i)%size_, tmp.get(i)/size_));
 
 			return tmp;
+		}else{return (new ArrayList<Integer>());} /* Condition d'arret */
+		
+	}
+	
+	/**
+	* @brief classUnion compresse les chemins du noeud les tiles de coordonnées x, y
+	* @param int x, y coordonnées du tile étudié
+	*/ 
+	public int classUnion(int x, int y){
+			int res;
+			int tmp1;
+			int tmp2;
+		if (union_.get(x+y*size_).getPere() == -1)
+			return (x+y*size_);
+		else{	
+			tmp1 = union_.get(x+y*size_).getPere()%size_;
+			tmp2 = union_.get(x+y*size_).getPere()/size_;
+			res = classUnion(tmp1,tmp2);
+			union_.get(x+y*size_).setPere(res);
+			return res;	
 		}
 	}
-	//!\---------------------- Fin Getters
+
+	/*
+	* @brief Méthode pour unir l'union des cases de coordonnées (x1,y1) avec celle de la case (x2, y2)
+	*/
+	public void union(int x1, int y1, int x2, int y2){ 
+		
+		int tile1Shorten = classUnion(x1,y1);
+		int tile2Shorten = classUnion(x2,y2);
+		int tv = getAllFils(vRac%size_, vRac/size_).size();
+		int tw = getAllFils(wRac%size_, wRac/size_).size();
+
+
+		if(getAllFils(vRac%size_, vRac/size_).size() >= getAllFils(wRac%size_, wRac/size_).size()){
+			union_.get(tile2Shorten).setPere(tile1Shorten);
+			union_.get(tile1Shorten).ajouterFils(tile2Shorten);
+		}else{
+			union_.get(tile1Shorten).setPere(wRac);
+			union_.get(tile2Shorten).ajouterFils(tile1Shorten);			
+		}
+	}
 }

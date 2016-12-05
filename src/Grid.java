@@ -3,10 +3,10 @@ import java.awt.*;
 import javax.swing.*;
 import java.util.*;
 import java.lang.*;
-import java.lang.Exception;
 
-/**
-* <h1>Tile</h1>
+
+/*
+* <h1>Grid</h1>
 * Le programme Grid implémente le plateau composé de cases (ou Tile)
 * Elle traite aussi la création graphique de la grille
 * <p>
@@ -30,24 +30,14 @@ class Grid extends JPanel {
 	private int dim_; 												
 	
 
-	/**
+	/*
 	* @brief Constructeur de Grid
 	* @param int tilePlayer qui est le numéro du joueur de la case dans le grid
 	* @pre actingPlayer doit être un joueur de l'équipe jouant en jeu, ou 0 si c'est une case vide, donc actingPlayer appartient à {0,1,2}
 	* @see La couleur de la case est indiquée par rapport au numéro du joueur 
 	*/ 
-	public Grid(int size, int baseNum) throws Exception{
-		if(size <= 1){
-			throw new Exception ("Grille trop petite !");
-		}
+	public Grid(int size, int baseNum){
 		
-		if(baseNum <=1){
-			throw new Exception ("Plus de bases ! ");
-		}
-		
-		if(baseNum >= size){
-			throw new Exception ("Pas de place pour jouer ! ");
-		}
 		/*
 		* Compteurs
 		*/
@@ -58,6 +48,8 @@ class Grid extends JPanel {
 		int base2Player2;
 		int cmpt2;
 		int distCases;
+		int cmptBase1;
+		int cmptBase2;
 		
 		boolean assezEspaceePlayer1;
 		boolean assezEspaceePlayer2;
@@ -70,7 +62,7 @@ class Grid extends JPanel {
 		tileTab_ = new Tile[size_*size_];
 		playerBase1 = new ArrayList<Integer>();
 		playerBase2 = new ArrayList<Integer>();
-		dim_ = 25*(size_); /* Dim est 25 fois plus grand que size, donc chaque case est 25 fois plus grand */
+		dim_ = 50*(size_); /* Dim est 50 fois plus grand que size, donc chaque case est 50 fois plus grand */
 
 		Dimension dimen = new Dimension(dim_, dim_);
 		setBackground(Color.GRAY);
@@ -84,7 +76,7 @@ class Grid extends JPanel {
 		*/
 		
 		while (cmpt < size_*size_){
-			tileTab_[cmpt] = new Tile(0);
+			this.tileTab_[cmpt] = new Tile(0);
 			cmpt ++;
 			add(tileTab_[cmpt]);
 		} 
@@ -102,12 +94,12 @@ class Grid extends JPanel {
 			/*
 			*	première case
 			*/
-			base1 = 0;
+			cmptBase1 = 0;
 			
 			/*
 			*	deuxième case
 			*/
-			base2 = 0;
+			cmptBase2 = 0;
 			
 			/*
 			* Pour voir si deux cases sont assez espacées l'un de l'autre
@@ -116,7 +108,7 @@ class Grid extends JPanel {
 			assezEspaceePlayer2 = true;
 			
 			
-			while(getValue(base1, base2) != 0 || !assezEspacee){
+			while(getValue(cmptBase1, cmptBase2) != 0 || !assezEspacee){
 				assezEspaceePlayer1 = true;
 				assezEspaceePlayer2 = true;
 				base1Player1 = (int)(size_ * Math.random());
@@ -130,10 +122,10 @@ class Grid extends JPanel {
 				*Player1
 				*/ 
 				while(cmpt2 < playerBase1.size()&& assezEspaceePlayer1){
-					distCasesPlayer1 = distanceCase(base1Player1, base2Player1, playerBase1.get(cmpt2)%size_;
+					distCasesPlayer1 = distanceCases(base1Player1, base2Player1, playerBase1.get(cmpt2)%size_);
 					distSizePlayer1 = playerBase1.get(cmpt2)/size_;
 								
-					if (((distCasesPlayer1, distSizePlayer1) < minimumDistance)){
+					if ((max(distCasesPlayer1, distSizePlayer1) < minimumDistance)){
 						assezEspaceePlayer1 = false;
 					}
 					++cmpt2;	
@@ -145,21 +137,17 @@ class Grid extends JPanel {
 				* Player 2
 				*/
 				while(cmpt2 < playerBase2.size() && assezEspaceePlayer2){
-					distCasesPlayer2 = distanceCase(base1Player2, base2Player2, playerBase2.get(cmpt2)%size_;
+					distCasesPlayer2 = distanceCases(base1Player2, base2Player2, playerBase2.get(cmpt2)%size_);
 					distSizePlayer2 = playerBase2.get(cmpt2)/size_;
 					
 					
-					if (((distCasesPlayer2, distSizePlayer2) < minimumDistance)){
+					if ((max(distCasesPlayer2, distSizePlayer2) < minimumDistance)){
 						assezEspaceePlayer2 = false;
 					}
 					++cmpt2;	
 				}
 				
 			}
-			// On modifie les coordonnée de la base tant que les coordonnées ne sont pas ceux d'une base déjà existante 
-			// et que la distance min entre la nouvelle base et toutes les bases déjà existante est bien supérieur ou égale à distMin
-										
-// On transforme la Tile en base si les conditions sont respectées et on ajoute ses coordonnées à l'ArrayList de stockage des bases
 			tileTab_[base1Player1+base2Player1*size_].setBase(1);
 			playerBase1.add(base1+base2*size_);
 			
@@ -184,7 +172,12 @@ class Grid extends JPanel {
 	/*
 	* @brief getter de la taille n pixels de chaque cases
 	*/
-	public Tile getTileSmall(int x, int y){return tileTab_[((x-1)/25)+((y-1)/25)*size_];}
+	public Tile getTileSmall(int x, int y){return tileTab_[((x-1)/50)+((y-1)/50)*size_];}
+	
+		/*
+	* @brief getter du Tile à partir des coordonnées
+	*/
+	public Tile getTile2(int x, int y){return tileTab_[x+y*size_];}
 	
 	/*
 	* @brief getter de Tile, retorune le tile dans le tableau
@@ -195,11 +188,6 @@ class Grid extends JPanel {
 	* @brief getter de numero de joueur
 	*/
 	public int getValue(int x, int y){return tileTab_[x+y*size_].getTilePlayer();}
-
-	/*
-	* @brief getter du Tile à partir des coordonnées
-	*/
-	public Tile getTile2(int x, int y){return tileTab_[x+y*size_];}
 
 	/*
 	* @brief checker pour voir si une case contient une étoile
@@ -239,10 +227,7 @@ class Grid extends JPanel {
 	* @brief Affichage graphique du composante, avec des clignotements des cases.
 	* @details Contient une classe locale qui permet d'utiliser un timer qui change les couleurs de clignotement 
 	*/
-	public void afficheComposante(int x, int y) throws Exception{
-		if(getVal(x, y) == 0){
-			throw new Exception("C'est la même case !");
-		}
+	public void afficheComposante(int x, int y){
 		int shortcut = getCompression(x,y);
 		ArrayList<Integer> tmpArray = new ArrayList<Integer>();
 		Timer timer = new Timer();			
@@ -263,7 +248,7 @@ class Grid extends JPanel {
 			    }
 			    	
 			    for (int i = 0; i < tmpArray.size(); ++i) {
-			    	if(tileTab_[tmpArray.get(i)]getBackground() != Color.yellow){
+			    	if(tileTab_[tmpArray.get(i)].getBackground() != Color.yellow){
 			   			tileTab_[tmpArray.get(i)].coloTile("yellow");
 					}else if(tileTab_[tmpArray.get(i)].getTilePlayer()==1){
 						tileTab_[tmpArray.get(i)].coloTile("red");
@@ -355,22 +340,13 @@ class Grid extends JPanel {
 			pathfind(xdeb, ydeb, xarr, yarr, res);
 		}
 	}
-	
-	
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////CONTINUE HERE///////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/*
 	* @brief nombreEtoiles, parcours les cases pour voir combien il y a de cases base
 	* @param int x et y coordonnées de la case
 	* @return cmpt nombre d'etoiles
 	*/
-	public int nombreEtoiles(int x, int y) throws Exception{
-		
-		if(x < 0 || y < 0){
-			throw new Exception("Coordonnées non valides");
-		}
+	public int nombreEtoiles(int x, int y) {
 		
 		int shortcut = getCompression(x,y);
 		int cmpt = 0;
@@ -391,22 +367,37 @@ class Grid extends JPanel {
 	}
 
 	/*
-	* @brief relieComposantes, utilise les valeurs de poids afin de voir les cases autour et éviter les bords
+	* @brief relieComposantes, utilise relieComposantesProxy pour voir si l'arrayList retouné par ce dernier ciontient au moins deux cases cherchées
 	* @param int x, y corrdonnées de la case étudiée et int playerNum le numéro de joueur
 	* @return booléen answer, true s'il y a une case autout de la case étudié appartenant au joueur numéro playerNum
 	*/
 	public boolean relieComposantes(int x, int y, int playerNum){
-
-		ArrayList<Integer> tmp = new ArrayList<Integer>();
+		
+		boolean answer = false;
 		ArrayList<Integer> res = new ArrayList<Integer>();
+		res = relieComposantesProxy(x, y, playerNum);		
+		if(res.size() >= 2){
+			answer = true;
+		}
+		return answer;
 
-		boolean answer1 = false;
-		boolean answer2 = false;
-
+	}
+	
+		/*
+	* @brief relieComposantesProxy, utilise les valeurs de poids afin de voir les cases autour et éviter les bords
+	* @param int x, y corrdonnées de la case étudiée et int playerNum le numéro de joueur
+	* @return une arraylist res contenant les cases autous du Tile (x, y) appartenant au meme couleur que celui de playerNum
+	*/
+	public ArrayList<Integer> relieComposantesProxy(int x, int y, int playerNum){
 		int xstock1 = 0;
 		int ystock1 = 0;
 		int xstock2 = 0;
 		int ystock2 = 0;
+		
+		
+		ArrayList<Integer> tmp = new ArrayList<Integer>();
+		ArrayList<Integer> res = new ArrayList<Integer>();
+
 
 		/* Mise en place les poids des cases */
 		if (x == size_ - 1){
@@ -452,17 +443,18 @@ class Grid extends JPanel {
 			}
 		}
 		else{
-			if( y == 0){
-				xstock1 = -1; 
-				ystock1 = 0; 
-				xstock2 = 1; 
-				ystock2 = 1;
-			}
-			else if(y == size_-1){
+		
+			if(y == size_-1){
 				xstock1 = -1; 
 				ystock1 = -1; 
 				xstock2 = 1; 
 				ystock2 = 0;
+			}			
+			else if( y == 0){
+				xstock1 = -1; 
+				ystock1 = 0; 
+				xstock2 = 1; 
+				ystock2 = 1;
 			}
 			else {
 				xstock1 = -1; 
@@ -472,8 +464,7 @@ class Grid extends JPanel {
 			}
 		}
 
-		// Double boucle qui permet de tester toutes les cases adjacentes la case actuelle
-		for (int i = ystock1;  <= ystock2; ++i){
+		for (int i = ystock1; i <= ystock2; ++i){
 			for (int j = xstock1; j <= xstock2;  ++j){
 				if (getValue(x+j, y+i) == playerNum){
 					if(tmp.size() == 0){
@@ -493,16 +484,17 @@ class Grid extends JPanel {
 				}
 			}
 		}
-
-		
-		if(res.size() >= 2){
-			answer = true;
-		}
-		return answer;
-
 	}
 
 	
-	public void union(int x1, int y1, int x2, int y2){class_.union(x, y, z, t);}
+	public void union(int x1, int y1, int x2, int y2){class_.union(x1, y1, x2, y2);}
+	
+	public int distanceCases(int x1, int y1, int x2, int y2){
+
+		int tmp_1 = Math.abs(x1-x2);
+		int tmp_2 = Math.abs(y1-y2);
+		return Math.max(tmp_1, tmp_2) - 1;
+
+	}
 	
 }

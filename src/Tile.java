@@ -1,7 +1,7 @@
 import java.awt.event.*;
 import java.awt.*;
 import javax.swing.*;
-import java.lang.Exception;
+
 
 /**
 * <h1>Tile</h1>
@@ -29,23 +29,19 @@ class Tile extends JPanel {
 	* @pre actingPlayer doit être un joueur de l'équipe jouant en jeu, ou 0 si c'est une case vide, donc actingPlayer appartient à {0,1,2}
 	* @see La couleur de la case est indiquée par rapport au numéro du joueur 
 	*/ 
-	public Tile(int tilePlayer) throws Exception{
-		if(tilePlayer>2 && tilePlayer<0){
-			throw new Exception("Numéro joueur invalide ! ");
-		}
-		
+	public Tile(int tilePlayer){ 		
 		this.tilePlayer_ = tilePlayer;
 		this.star_ = false;
 
 		if (tilePlayer == 1){
 			setBackground(Color.blue);
-			setPreferredSize(new Dimension(25,25));
+			setPreferredSize(new Dimension(50,50));
 		}else if(tilePlayer == 2){
 			setBackground(Color.red);
-			setPreferredSize(new Dimension(25,25));
+			setPreferredSize(new Dimension(50,50));
 		}else{
 			setBackground(Color.white);
-			setPreferredSize(new Dimension(25,25));
+			setPreferredSize(new Dimension(50,50));
 		}
 	}
 
@@ -70,18 +66,14 @@ class Tile extends JPanel {
 	* @brief setter pour le joueur occupant le Tile, méthode de coloriage
 	* @pre tilePlayer == 1 ou tilePlayer == 2 
 	*/ 
-	public void setTilePlayer(int tilePlayer) throws Exception{
-		if(tilePlayer != 2 || tilePlayer != 1){
-			throw new Exception("Numéro joueur invalide ! ");
-		}
+	public void setTilePlayer(int tilePlayer){
+		
 		this.tilePlayer_ = tilePlayer;
 		
 		if (tilePlayer == 1){
 			colorerCase("red");
-			//setPreferredSize(new Dimension(25,25));
 		}else if(tilePlayer == 2){
 			colorerCase("blue");
-			//setPreferredSize(new Dimension(25,25));
 		}		
 	}
 	
@@ -122,7 +114,7 @@ class Tile extends JPanel {
 			setBackground(Color.yellow);
 		}
 		if(color.equals("red")){
-			setBackground(Color.redr);
+			setBackground(Color.red);
 		}
 		if(color.equals("blue")){
 			setBackground(Color.blue);
@@ -131,42 +123,4 @@ class Tile extends JPanel {
 			setBackground(Color.white);
 		}		
 	}
-	
-	/*//!\ Méthode utile à afficheComposante
-	public void blinkingTile(){
-
-		if (getBackground() != Color.yellow)
-			setBackground(Color.yellow);
-		else if(tilePlayer_ == 1)
-			setBackground(Color.blue);
-		else if(tilePlayer_ == 2)
-			setBackground(Color.red);
-		else
-			setBackground(Color.white);
-	}
-	*/
-
-	//!\ Méthode utile à l'initialisation de la grille de jeu
-	/*public boolean setBase(int val){
-
-		if (case_ == 0 && (val ==1 || val == 2)){
-			case_ = val;
-			etoile_ = true;
-
-			if (val == 1) 
-				setBackground(Color.blue);
-			else
-				setBackground(Color.red);
-
-			// Interface graphique de la case transformé en base
-			JLabel texte = new JLabel("*");
-			Font font = new Font("Serif", Font.BOLD, 20);
-			texte.setFont(font);
-			texte.setForeground(Color.BLACK);
-			add(texte);
-
-			return true;
-		}
-		return false;
-	}*/
 }
