@@ -81,15 +81,15 @@ class UnionClass{
 		
 		int tile1Shorten = classUnion(x1,y1);
 		int tile2Shorten = classUnion(x2,y2);
-		int tv = getAllFils(vRac%size_, vRac/size_).size();
-		int tw = getAllFils(wRac%size_, wRac/size_).size();
+		int tv = getAllFils(tile1Shorten%size_, tile1Shorten/size_).size();
+		int tw = getAllFils(tile2Shorten%size_, tile2Shorten/size_).size();
 
 
-		if(getAllFils(vRac%size_, vRac/size_).size() >= getAllFils(wRac%size_, wRac/size_).size()){
+		if(getAllFils(tile1Shorten%size_, tile1Shorten/size_).size() >= getAllFils(tile2Shorten%size_, tile2Shorten/size_).size()){
 			union_.get(tile2Shorten).setPere(tile1Shorten);
 			union_.get(tile1Shorten).ajouterFils(tile2Shorten);
 		}else{
-			union_.get(tile1Shorten).setPere(wRac);
+			union_.get(tile1Shorten).setPere(tile2Shorten);
 			union_.get(tile2Shorten).ajouterFils(tile1Shorten);			
 		}
 	}
