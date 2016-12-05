@@ -70,7 +70,7 @@ class Grid extends JPanel {
 		tileTab_ = new Tile[size_*size_];
 		playerBase1 = new ArrayList<Integer>();
 		playerBase2 = new ArrayList<Integer>();
-		dim_ = 25*(size_);
+		dim_ = 25*(size_); /* Dim est 25 fois plus grand que size, donc chaque case est 25 fois plus grand */
 
 		Dimension dimen = new Dimension(dim_, dim_);
 		setBackground(Color.GRAY);
@@ -158,8 +158,8 @@ class Grid extends JPanel {
 			}
 			// On modifie les coordonnée de la base tant que les coordonnées ne sont pas ceux d'une base déjà existante 
 			// et que la distance min entre la nouvelle base et toutes les bases déjà existante est bien supérieur ou égale à distMin
-							
-			// On transforme la Tile en base si les conditions sont respectées et on ajoute ses coordonnées à l'ArrayList de stockage des bases
+										
+// On transforme la Tile en base si les conditions sont respectées et on ajoute ses coordonnées à l'ArrayList de stockage des bases
 			tileTab_[base1Player1+base2Player1*size_].setBase(1);
 			playerBase1.add(base1+base2*size_);
 			
@@ -169,42 +169,57 @@ class Grid extends JPanel {
 		}		
 	}
 
-	//!\---------------------- Getters
+									
+	
+	/*
+	* @brief getter de Taille, retorune un entier, taille du grid en nombre de cases 
+	*/
+	public int getTaille(){return size_;}
 
-	public int getTaille(){
-		return size_;
-	}
+	/*
+	* @brief getter de dim_, retorune un entier, dimension du grid en pixels
+	*/									
+	public int getDim() {return dim_;}
 
-	public int getDim() {
-		return dim_;
-	}
+	/*
+	* @brief getter de la taille n pixels de chaque cases
+	*/
+	public Tile getTileSmall(int x, int y){return tileTab_[((x-1)/25)+((y-1)/25)*size_];}
+	
+	/*
+	* @brief getter de Tile, retorune le tile dans le tableau
+	*/
+	public Tile getTile(int tileNum){return tileTab_[tileNum];}
 
-	public Tile getTileSmall(int x, int y){
-		return tileTab_[((x-1)/25)+((y-1)/25)*size_];
-	}
+	/*
+	* @brief getter de numero de joueur
+	*/
+	public int getValue(int x, int y){return tileTab_[x+y*size_].getTilePlayer();}
 
-	public Tile getTile(int tileNum){
-		return tileTab_[tileNum];
-	}
+	/*
+	* @brief getter du Tile à partir des coordonnées
+	*/
+	public Tile getTile2(int x, int y){return tileTab_[x+y*size_];}
 
-	public int getValue(int x, int y){
-		return tileTab_[x+y*size_].getTilePlayer();
-	}
+	/*
+	* @brief checker pour voir si une case contient une étoile
+	*/
+	public boolean isBasePlayer(int x, int y){return tileTab_[x + y*size_].isStar();}
 
-	public boolean isBasePlayer(int x, int y){
-		return tileTab_[x + y*size_].isStar();
-	}
+	/*
+	* @brief getter pour retourner la classe union d'une case par rapport aux coordonnées
+	*/
+	public int getCompression(int x, int y){return class_.classUnion(x,y);}
 
-	public int getCompression(int x, int y){
-		return class_.classUnion(x,y);
-	}
-
-
-	public int getCompression(int num){
-		return class_.classUnion(num%size_, num/size_);
-	}
+	/*
+	* @brief getter pour retourner la classe union d'une case par rapport au numero de case
+	*/
+	public int getCompression(int num){return class_.classUnion(num%size_, num/size_);}
 
 
+	/*
+	* @brief Affichage du grid. Copie complète de l'internet, vous verez probablement cette méthode dans plusieurs groupes.
+	*/
 	public void afficher(int x, int y){
 		System.out.println("Les numéros de cases appartenant au père : " + class_.classUnion(x,y));
 
@@ -219,12 +234,11 @@ class Grid extends JPanel {
 		System.out.println("=======================");		
 	}
 	
-	
-	//!\---------------------- Fin Getters
 
-
-	//!\brief Méthode n°2 afficheComposante
-	//!\param x, y : les coordonnées de la case dont pour laquelle la composante sera affiché
+	/*
+	* @brief Affichage graphique du composante, avec des clignotements des cases.
+	* @details Contient une classe locale qui permet d'utiliser un timer qui change les couleurs de clignotement 
+	*/
 	public void afficheComposante(int x, int y) throws Exception{
 		if(getVal(x, y) == 0){
 			throw new Exception("C'est la même case !");
@@ -264,22 +278,29 @@ class Grid extends JPanel {
 	}
 
 
-	//!\brief Méthode n°3 existeCheminCases
-	//!\param x, y, z, t : x et y les coordonnées de la première case; z et t les coordonnées de la seconde case
-	//!\return un booléen si les deux cases appartiennent à la même composante
-	public boolean existeCheminCases(int x, int y, int z, int t){
-		return (getCompression(x, y) == getCompression(z, t));
-	}
+	/*
+	* @brief retorune un booleen pour voir si deux cases partagent la même composante
+	* @param int x1, y1 coordonnées du premier Tile, x2, y2 coordonnées du deuxième
+	*/
+	public boolean existeCheminCases(int x1, int y1, int x2, int y2){return (getCompression(x1, y1) == getCompression(x2, y2));}
 
 
-	//!\brief Méthode n°4 relierCasesMin
-	//!\param x, y, z, t : x et y les coordonnées de la première case; z et t les coordonnées de la seconde case;
-	//!\return compt_ : le nombre minimum de cases blanche à colorié afin de rejoindre les deux cases.
+	/*
+	* @brief Donner la distance en vol d'oiseau entre deux cases
+	* @param int x1, y1 coordonnées du premier Tile, x2, y2 coordonnées du deuxième
+	* @detail se facade dans la méthode pathfind
+	*/
 	public int relierCasesMin(int x1, int y1, int x2, int y2){
 		int res = 0;
 		return pathfind(x1, y1, x2, y2, res);
 	}
 	
+	/*
+	* @brief Donner la distance en vol d'oiseau entre deux cases
+	* @param int xdeb, ydeb coordonnées du premier Tile, xarr, yarr coordonnées du deuxième, int res
+	* @return res la distance entre deux cases
+	* @detail récursif et ne prend pas en compte les obstacles
+	*/
 	public int pathfind(int xdeb, int ydeb, int xarr, int yarr, int res){
 		int result = res;
 		/*
@@ -339,150 +360,149 @@ class Grid extends JPanel {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////CONTINUE HERE///////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//!\brief Méthode n°5 nombreEtoiles
-	//!\param x, y : les coordonnées de la case pour laquelle on veut connaitre le nombre de bases appartenant à sa composante
-	//!\return un entier étant le nombre de base appartenant à la composante
-	public int nombreEtoiles(int x, int y){
 
-		int compt = 0;
-		int rac = getComp(x,y);
-		ArrayList<Integer> tmp = new ArrayList<Integer>();
-
-		tmp.addAll(class_.getTousFils(rac%size_,rac/size_));
-		tmp.add(rac);
-
-		// Pour tous les éléments de la composante on test si c'est une base et on incrément le compteur si c'est le cas
-		for (int i = 0; i < tmp.size(); ++i) {
-			if (isBasePlayer(tmp.get(i)%size_, tmp.get(i)/size_))
-				compt++;
+	/*
+	* @brief nombreEtoiles, parcours les cases pour voir combien il y a de cases base
+	* @param int x et y coordonnées de la case
+	* @return cmpt nombre d'etoiles
+	*/
+	public int nombreEtoiles(int x, int y) throws Exception{
+		
+		if(x < 0 || y < 0){
+			throw new Exception("Coordonnées non valides");
+		}
+		
+		int shortcut = getCompression(x,y);
+		int cmpt = 0;
+		ArrayList<Integer> stockArray = new ArrayList<Integer>();
+		
+		/* stockage des noeuds dans l'union class dans une arrayList de stockage */
+		stockArray.addAll(class_.getTousFils(shortcut%size_,shortcut/size_));
+		stockArray.add(shortcut);
+		
+		/* Parcours de chaque bases pour voir si il y a des étoiles */
+		for (int i = 0; i < stockArray.size(); ++i) {
+			if (isBasePlayer(stockArray.get(i)%size_, stockArray.get(i)/size_)){
+				++cmpt;
+			}
 		}
 
-		return compt;
+		return cmpt;
 	}
 
-
-	//!\brief Méthode n°7 relieComposantes
-	//!\param x, y, c : x et y les coordonnées de la case à tester; c la couleur de la case à tester
-	//!\return un ArrayList d'entier contenant la position des cases concernées
-	public ArrayList<Integer> relieComposantes(int x, int y, int c){
+	/*
+	* @brief relieComposantes, utilise les valeurs de poids afin de voir les cases autour et éviter les bords
+	* @param int x, y corrdonnées de la case étudiée et int playerNum le numéro de joueur
+	* @return booléen answer, true s'il y a une case autout de la case étudié appartenant au joueur numéro playerNum
+	*/
+	public boolean relieComposantes(int x, int y, int playerNum){
 
 		ArrayList<Integer> tmp = new ArrayList<Integer>();
 		ArrayList<Integer> res = new ArrayList<Integer>();
+
+		boolean answer1 = false;
+		boolean answer2 = false;
 
 		int xstock1 = 0;
 		int ystock1 = 0;
 		int xstock2 = 0;
 		int ystock2 = 0;
 
-
-		// On attribu des valeurs différentes pour la double boucle à suivre afin d'éviter
-		// que le programme essaye d'effectuer ses test sur des cases extérieurs au tableau (-1 par exemple)
-		if (x == 0){
-			if( y == 0){
-				xstock1 = 0; ystock1 = 0; xstock2 = 1; ystock2 = 1;
+		/* Mise en place les poids des cases */
+		if (x == size_ - 1){
+			
+			if(y == size_ - 1){
+				xstock1 = -1; 
+				ystock1 = -1; 
+				xstock2 = 0; 
+				ystock2 = 0;
+			}			
+			else if( y == 0){
+				xstock1 = -1; 
+				ystock1 = 0; 
+				xstock2 = 0; 
+				ystock2 = 1;
 			}
-			else if(y == size_ - 1){
-				xstock1 = 0; ystock1 = -1; xstock2 = 1; ystock2 = 0;
+			else{
+				xstock1 = -1; 
+				ystock1 = -1; 
+				xstock2 = 0; 
+				ystock2 = 1;
 			}
-			else {
-				xstock1 = 0; ystock1 = -1; xstock2 = 1; ystock2 = 1;
+		}		
+		else if (x == 0){
+			
+			if(y == size_ - 1){
+				xstock1 = 0; 
+				ystock1 = -1; 
+				xstock2 = 1; 
+				ystock2 = 0;
+			}			
+			else if( y == 0){
+				xstock1 = 0; 
+				ystock1 = 0;
+				xstock2 = 1; 
+				ystock2 = 1;
 			}
-		}
-		else if (x == size_ - 1){
-			if( y == 0){
-				xstock1 = -1; ystock1 = 0; xstock2 = 0; ystock2 = 1;
-			}
-			else if(y == size_ - 1){
-				xstock1 = -1; ystock1 = -1; xstock2 = 0; ystock2 = 0;
-			}
-			else {
-				xstock1 = -1; ystock1 = -1; xstock2 = 0; ystock2 = 1;
+			else{
+				xstock1 = 0; 
+				ystock1 = -1; 
+				xstock2 = 1; 
+				ystock2 = 1;
 			}
 		}
 		else{
 			if( y == 0){
-				xstock1 = -1; ystock1 = 0; xstock2 = 1; ystock2 = 1;
+				xstock1 = -1; 
+				ystock1 = 0; 
+				xstock2 = 1; 
+				ystock2 = 1;
 			}
 			else if(y == size_-1){
-				xstock1 = -1; ystock1 = -1; xstock2 = 1; ystock2 = 0;
+				xstock1 = -1; 
+				ystock1 = -1; 
+				xstock2 = 1; 
+				ystock2 = 0;
 			}
 			else {
-				xstock1 = -1; ystock1 = -1; xstock2 = 1; ystock2 = 1;
+				xstock1 = -1; 
+				ystock1 = -1; 
+				xstock2 = 1; 
+				ystock2 = 1;
 			}
 		}
 
 		// Double boucle qui permet de tester toutes les cases adjacentes la case actuelle
-		for (int k = ystock1; k <= ystock2; ++k) {
-			for (int l = xstock1; l <= xstock2;  ++l) {
-
-				// Si c'est la case actuelle on la passe (aucun intérêt à la tester)
-				if (k == 0 && l == 0) 		
-					continue;
-
-				// Si la case adjacente est de la même couleur que la case actuelle et que l'ArrayList temporaire est vide, on ajoute la classUnion de la case adjacente dans l'ArrayList
-				if (getValue(x+l, y+k) == c && tmp.size() == 0){
-					tmp.add(class_.classUnion(x+l, y+k));
-					res.add((x+l)+(y+k)*size_);
-				}
-				// Sinon si la case adjacente est de la même couleur que la case actuelle alors...
-				else if (getValue(x+l, y+k) == c){
-
+		for (int i = ystock1;  <= ystock2; ++i){
+			for (int j = xstock1; j <= xstock2;  ++j){
+				if (getValue(x+j, y+i) == playerNum){
+					if(tmp.size() == 0){
+						tmp.add(class_.classUnion(x+j, y+i));
+						res.add((x+l)+(y+k)*size_);
+					}
 					boolean newComp = true;
-					// ... pour toutes les valeur de tmp...
-					for (int i = 0; i < tmp.size(); ++i) {
-
-						// ... on test si la classUnion de la case adjacente n'est pas déjà dedans, si ce n'est pas le cas on incrément le compteur et on ajoute sa classUnion dans tmp
-						if (existeCheminCases(x+l, y+k, tmp.get(i)%size_, tmp.get(i)/size_)){
+					for (int k = 0; k < tmp.size(); ++k) {
+						if (existeCheminCases(x+j, y+i, tmp.get(k)%size_, tmp.get(k)/size_)){
 							newComp = false;
 						}
 					}
-					if (newComp) {
-						tmp.add(class_.classUnion(x+l, y+k));
-						res.add((x+l)+(y+k)*size_);
+					if (newComp){
+						tmp.add(class_.classUnion(x+j, y+i));
+						res.add((x+j)+(y+i)*size_);
 					}
 				}
 			}
 		}
 
-		return res;
-
-	}
-
-	//!\brief Méthode n°9.1 evaluerCase1
-	//!\param x, y, j : x et y les coordonnées de la case à tester; j le joueur pour lequel la fonction est utilisé
-	//!\return un entier étant l'index dans la grille de la case à colorié
-	public int evaluerCase1(int x, int y, int j){
-		if(j == 1){
-			if(getValue(x, y) != 0)
-				return size_;
-			else
-				return distanceCase(x, y, xCentreJ1, yCentreJ1);
-		}
-		else if(j == 2){
-			if(getValue(x, y) != 0)
-				return size_;
-			else
-				return distanceCase(x, y, xCentreJ2, yCentreJ2);
-		}
-		return size_;
-	}
-
-	// ------------------------------------------ Méthodes supplémentaires
-
-	//!\ Fait l'union entre les cases de coordonnées (x, y) et (z, t)
-	public void union(int x, int y, int z, int t){
-
-		class_.union(x, y, z, t);
-
-	}
-
-	//!\ Retourne la distance entre deux cases (non comprises)
-	public int distanceCase(int x, int y, int z, int t){
-
-		int tmp1 = Math.abs(x-z);
-		int tmp2 = Math.abs(y-t);
-		return Math.max(tmp1, tmp2) - 1;
-
-	}
 		
+		if(res.size() >= 2){
+			answer = true;
+		}
+		return answer;
+
+	}
+
+	
+	public void union(int x1, int y1, int x2, int y2){class_.union(x, y, z, t);}
+	
 }
