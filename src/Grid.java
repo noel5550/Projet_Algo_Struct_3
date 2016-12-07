@@ -352,6 +352,17 @@ class Grid extends JPanel {
 				--xdeb;
 				++res;
 			}
+				
+			/*
+			if ((xarr - xdeb) < 0) { --xdeb; }			// TRY ME
+			else if ((xarr - xdeb) > 0) { ++xdeb; }			// remplacer les else if pour cas N/S/E/W
+			
+			if ((yarr - ydeb) < 0) { --ydeb; }
+			else if ((yarr - ydeb) > 0) { ++ydeb; }
+			
+			++res;
+			
+			*/
 			pathfind(xdeb, ydeb, xarr, yarr, res);
 		}
 	}
