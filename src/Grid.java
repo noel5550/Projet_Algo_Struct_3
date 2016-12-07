@@ -308,6 +308,22 @@ class Grid extends JPanel {
 				--xdeb;
 				--ydeb;
 				++res;	
+				
+						/*
+			*	Si tileDeb se trouve au SE de tileArr
+			*/
+			if(((xarr - xdeb)<0) && ((yarr - ydeb)>0)){
+				--xdeb;
+				++ydeb;
+				++res;
+				
+			/*
+			*	Si tileDeb se trouve au NW de tileArr
+			*/
+			}else if (((xarr - xdeb)>0) && ((yarr - ydeb)<0)){
+				++xdeb;
+				--ydeb;
+				++res;	
 
 			/*
 			*	Si tileDeb se trouve au Nord de tileArr
