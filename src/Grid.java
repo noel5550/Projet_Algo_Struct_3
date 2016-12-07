@@ -127,7 +127,6 @@ class Grid extends JPanel {
 								
 					if ((max(distCasesPlayer1, distSizePlayer1) < minimumDistance)){
 						assezEspaceePlayer1 = false;
-					}
 					++cmpt2;	
 				}
 				
@@ -231,7 +230,7 @@ class Grid extends JPanel {
 		int shortcut = getCompression(x,y);
 		ArrayList<Integer> tmpArray = new ArrayList<Integer>();
 		Timer timer = new Timer();			
-		tmpArray.addAll(class_.getTousFils(rac%size_,rac/size_));
+		tmpArray.addAll(class_.getTousFils(shortcut%size_,shortcut/size_));
 		tmpArray.add(shortcut);
 			
 		/*
