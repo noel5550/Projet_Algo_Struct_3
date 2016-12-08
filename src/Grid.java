@@ -5,6 +5,7 @@ import java.util.*;
 import java.lang.*;
 
 
+
 /*
 * <h1>Grid</h1>
 * Le programme Grid implémente le plateau composé de cases (ou Tile)
@@ -42,14 +43,14 @@ class Grid extends JPanel {
 		* Compteurs
 		*/
 		int cmpt = 0;
-		int base1Player1;
-		int base2Player1;
-		int base1Player2;
-		int base2Player2;
-		int cmpt2;
-		int distCases;
-		int cmptBase1;
-		int cmptBase2;
+		int base1Player1 = 0;
+		int base2Player1 = 0;
+		int base1Player2 = 0;
+		int base2Player2 = 0;
+		int cmpt2 = 0;
+		int distCases = 0;
+		int cmptBase1 = 0;
+		int cmptBase2 = 0;
 		
 		boolean assezEspaceePlayer1;
 		boolean assezEspaceePlayer2;
@@ -85,7 +86,11 @@ class Grid extends JPanel {
 		*	Distance minimum entre chaque cases base/étoile, pour pouvoir jouer, voyons !
 		*/
 		int minimumDistance = size_/baseNum;
-
+		int distCasesPlayer1;
+		int distCasesPlayer2;
+		int distSizePlayer1;
+		int distSizePlayer2;
+		
 		/*
 		*	Ajout de bases pour le premier joueur
 		*/
@@ -108,7 +113,7 @@ class Grid extends JPanel {
 			assezEspaceePlayer2 = true;
 			
 			
-			while(getValue(cmptBase1, cmptBase2) != 0 || !assezEspacee){
+			while(getValue(cmptBase1, cmptBase2) != 0 || (!assezEspaceePlayer1 && !assezEspaceePlayer2)){
 				assezEspaceePlayer1 = true;
 				assezEspaceePlayer2 = true;
 				base1Player1 = (int)(size_ * Math.random());
@@ -122,12 +127,13 @@ class Grid extends JPanel {
 				*Player1
 				*/ 
 				while(cmpt2 < playerBase1.size()&& assezEspaceePlayer1){
-					distCasesPlayer1 = distanceCases(base1Player1, base2Player1, playerBase1.get(cmpt2)%size_);
+					distCasesPlayer1 = distanceCases(base1Player1, base2Player1, playerBase1.get(cmpt2) %size_, playerBase1.get(cmpt2) /size_);
 					distSizePlayer1 = playerBase1.get(cmpt2)/size_;
 								
-					if ((max(distCasesPlayer1, distSizePlayer1) < minimumDistance)){
+					if ((Math.max(distCasesPlayer1, distSizePlayer1) < minimumDistance)){
 						assezEspaceePlayer1 = false;
-					++cmpt2;	
+					++cmpt2;
+					}	
 				}
 				
 				cmpt2 = 0;
@@ -136,22 +142,22 @@ class Grid extends JPanel {
 				* Player 2
 				*/
 				while(cmpt2 < playerBase2.size() && assezEspaceePlayer2){
-					distCasesPlayer2 = distanceCases(base1Player2, base2Player2, playerBase2.get(cmpt2)%size_);
+					distCasesPlayer2 = distanceCases(base1Player2, base2Player2, playerBase2.get(cmpt2) %size_, playerBase1.get(cmpt2) /size_);
 					distSizePlayer2 = playerBase2.get(cmpt2)/size_;
 					
 					
-					if ((max(distCasesPlayer2, distSizePlayer2) < minimumDistance)){
+					if ((Math.max(distCasesPlayer2, distSizePlayer2) < minimumDistance)){
 						assezEspaceePlayer2 = false;
 					}
 					++cmpt2;	
 				}
 				
 			}
-			tileTab_[base1Player1+base2Player1*size_].setBase(1);
-			playerBase1.add(base1+base2*size_);
+			tileTab_[base1Player1+base2Player1*size_].setPlayerBase(1);
+			playerBase1.add(base1Player2+base2Player2*size_);
 			
-			tileTab_[base1Player2+base2Player2*size_].setBase(2);
-			playerBase2.add(base1+base2*size_);
+			tileTab_[base1Player2+base2Player2*size_].setPlayerBase(2);
+			playerBase2.add(base1Player2+base2Player2*size_);
 			++cmpt;
 		}		
 	}
@@ -203,7 +209,7 @@ class Grid extends JPanel {
 	*/
 	public int getCompression(int num){return class_.classUnion(num%size_, num/size_);}
 
-
+	
 	/*
 	* @brief Affichage du grid. Copie complète de l'internet, vous verez probablement cette méthode dans plusieurs groupes.
 	*/
@@ -213,7 +219,7 @@ class Grid extends JPanel {
 		int compression = getCompression(x,y);
 		int cmpt = 0;
 		ArrayList<Integer> tmpArray = new ArrayList<Integer>();
-		tmpArray.addAll(class_.getAllFils(compression%size_, compression/size_));
+		tmpArray.addAll(class_.getAllUnion(compression%size_, compression/size_));
 		while(cmpt < tmpArray.size()){
 			System.out.print(", " + tmpArray.get(cmpt));
 			++cmpt;
@@ -229,17 +235,17 @@ class Grid extends JPanel {
 	public void afficheComposante(int x, int y){
 		int shortcut = getCompression(x,y);
 		ArrayList<Integer> tmpArray = new ArrayList<Integer>();
-		Timer timer = new Timer();			
-		tmpArray.addAll(class_.getTousFils(shortcut%size_,shortcut/size_));
+		java.util.Timer timer = new java.util.Timer();			
+		tmpArray.addAll(class_.getAllUnion(shortcut%size_,shortcut/size_));
 		tmpArray.add(shortcut);
 			
 		/*
 		* Création d'un timer pour beeps
 		*/
 		class CountingBeeps extends TimerTask {
-			static int nbRep_ = 0;
+			int nbRep = 0;
 		    public void run() {
-		    	++nbRep_;
+		    	++nbRep;
 		    	if(nbRep >= 12){
 			    	timer.cancel();
 			    	timer.purge();
@@ -248,11 +254,11 @@ class Grid extends JPanel {
 			    	
 			    for (int i = 0; i < tmpArray.size(); ++i) {
 			    	if(tileTab_[tmpArray.get(i)].getBackground() != Color.yellow){
-			   			tileTab_[tmpArray.get(i)].coloTile("yellow");
+			   			tileTab_[tmpArray.get(i)].colorerCase("yellow");
 					}else if(tileTab_[tmpArray.get(i)].getTilePlayer()==1){
-						tileTab_[tmpArray.get(i)].coloTile("red");
+						tileTab_[tmpArray.get(i)].colorerCase("red");
 					}else if(tileTab_[tmpArray.get(i)].getTilePlayer()==2){
-						tileTab_[tmpArray.get(i)].coloTile("blue");
+						tileTab_[tmpArray.get(i)].colorerCase("blue");
 					}
 								   	
 			   	}
@@ -302,7 +308,7 @@ class Grid extends JPanel {
 			
 			++res;
 			
-			pathfind(xdeb, ydeb, xarr, yarr, res);
+			return pathfind(xdeb, ydeb, xarr, yarr, res);
 		}
 	}
 
@@ -318,7 +324,7 @@ class Grid extends JPanel {
 		ArrayList<Integer> stockArray = new ArrayList<Integer>();
 		
 		/* stockage des noeuds dans l'union class dans une arrayList de stockage */
-		stockArray.addAll(class_.getTousFils(shortcut%size_,shortcut/size_));
+		stockArray.addAll(class_.getAllUnion(shortcut%size_,shortcut/size_));
 		stockArray.add(shortcut);
 		
 		/* Parcours de chaque bases pour voir si il y a des étoiles */
@@ -434,7 +440,7 @@ class Grid extends JPanel {
 				if (getValue(x+j, y+i) == playerNum){
 					if(tmp.size() == 0){
 						tmp.add(class_.classUnion(x+j, y+i));
-						res.add((x+l)+(y+k)*size_);
+						res.add((x+j)+(y+i)*size_);
 					}
 					boolean newComp = true;
 					for (int k = 0; k < tmp.size(); ++k) {
@@ -449,6 +455,7 @@ class Grid extends JPanel {
 				}
 			}
 		}
+		return res;
 	}
 
 	

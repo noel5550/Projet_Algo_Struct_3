@@ -16,7 +16,7 @@ class Game extends JFrame{
 
 	private Grid grille;
 	private JPanel menu;
-	private JLabel affScoreJ1, affScoreJ2;
+	private JLabel affScoreJ1, affScoreJ2, affTour_;
 	private JButton b1, b2, b3, b4, b5, b6, b7, b8, b9, b10;
 	private int joueur, scoreJ1, scoreJ2, nbBase, taille, choix, compt, posTmpX, posTmpY;
 	private ArrayList<Integer> listeCoup, evaluer;
@@ -30,8 +30,10 @@ class Game extends JFrame{
 		menu = new JPanel();
 		scoreJ1 = 0;
 		scoreJ2 = 0;
-		affScoreJ1 = new JLabel("Score Player 1 : "+ scoreJ1);
+		/*affScoreJ1 = new JLabel("Score Player 1 : "+ scoreJ1);
+		add(affScoreJ1);
 		affScoreJ2 = new JLabel("Score Player 2 : "+ scoreJ2);
+		add(affScoreJ2);*/
 		joueur = 1;
 		nbBase = nbB;
 		taille = t;
@@ -43,6 +45,9 @@ class Game extends JFrame{
 		choix = c;
 		listeCoup = new ArrayList<Integer>();
 		evaluer = new ArrayList<Integer>();
+		affScoreJ1 = new JLabel("Score Player 1 : "+ scoreJ1);
+		affScoreJ2 = new JLabel("Score Player 2 : "+ scoreJ2);
+		affTour_ = new JLabel("C'est au tour du joueur : " + joueur);
 
 		//------------------------------------------------------------------- Paramétrage de la fenêtre principale
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -76,10 +81,8 @@ class Game extends JFrame{
 		        		public void mousePressed(MouseEvent e){
 		    				grille.afficheComposante((e.getX()-1)/50, (e.getY()-1)/50);
 		    				suppr();
-		    				if (choix == 1) 
-		    					joueDeuxHumains();
-
-		    				
+		    				if (choix == 1){joueDeuxHumains();}
+		    				else if(choix == 2){joueOrdiHumain();}		    				
 		        		}
 		        });
 			}
@@ -93,10 +96,8 @@ class Game extends JFrame{
 		        		public void mousePressed(MouseEvent e){
 		    				System.out.println(grille.getCompression((e.getX()-1)/50, (e.getY()-1)/50));
 		    				suppr();
-		    				if (choix == 1) 
-		    					joueDeuxHumains();
-
-		    				
+		    				if (choix == 1){joueDeuxHumains();}
+							else if(choix == 2){joueOrdiHumain();}		    				
 		        		}
 		        });
 			}
@@ -110,8 +111,8 @@ class Game extends JFrame{
 		        		public void mousePressed(MouseEvent e){
 		    				System.out.println(grille.getValue((e.getX()-1)/50, (e.getY()-1)/50));
 		    				suppr();
-		    				if (choix == 1) 
-		    					joueDeuxHumains();
+		    				if (choix == 1){joueDeuxHumains();}
+							else if(choix == 2){joueOrdiHumain();}		
    				
 		        		}
 		        });
@@ -126,10 +127,8 @@ class Game extends JFrame{
 		        		public void mousePressed(MouseEvent e){
 		    				System.out.println(grille.nombreEtoiles((e.getX()-1)/50, (e.getY()-1)/50));
 		    				suppr();
-		    				if (choix == 1) 
-		    					joueDeuxHumains();
-		    				//else if(choix == 2)
-		    					//joueOrdiHumain();
+		    				if (choix == 1){joueDeuxHumains();}
+							else if(choix == 2){joueOrdiHumain();}		
 		    				
 		        		}
 		        });
@@ -151,10 +150,8 @@ class Game extends JFrame{
     					else{
     						System.out.println(grille.distanceCases(posTmpX, posTmpY, (e.getX()-1)/50, (e.getY()-1)/50));
 							suppr();
-							if (choix == 1)
-								joueDeuxHumains();
-							//else if(choix == 2)
-								//joueOrdiHumain();
+							if (choix == 1){joueDeuxHumains();}
+							else if(choix == 2){joueOrdiHumain();}		
 							--compt;
     					}
 	    			}
@@ -177,10 +174,8 @@ class Game extends JFrame{
 		        				System.out.print(tmp.get(i) + " ");
 		        			}
 		    				suppr();
-		    				if (choix == 1) 
-		    					joueDeuxHumains();
-		    				//else if(choix == 2)
-		    				//	joueOrdiHumain();
+		    				if (choix == 1){joueDeuxHumains();}
+							else if(choix == 2){joueOrdiHumain();}		
 		    				
 		        		}
 		        });
@@ -201,10 +196,8 @@ class Game extends JFrame{
 	    					else{
 	    						System.out.println(grille.existeCheminCases(posTmpX, posTmpY, (e.getX()-1)/50, (e.getY()-1)/50));
 								suppr();
-								if (choix == 1)
-									joueDeuxHumains();
-							//	else if(choix == 2)
-									//joueOrdiHumain();
+								if (choix == 1){joueDeuxHumains();}
+								else if(choix == 2){joueOrdiHumain();}		
 								--compt;
 	    					}
 		        		}
@@ -257,10 +250,8 @@ class Game extends JFrame{
 	    					else{
 	    						System.out.println(grille.relierCasesMin(posTmpX, posTmpY, (e.getX()-1)/50, (e.getY()-1)/50));
 								suppr();
-								if (choix == 1)
-									joueDeuxHumains();
-								//else if(choix == 2)
-									//joueOrdiHumain();
+								if (choix == 1){joueDeuxHumains();}
+								else if(choix == 2){joueOrdiHumain();}		
 								--compt;
 	    					}
 		        		}
@@ -276,10 +267,8 @@ class Game extends JFrame{
 		        		public void mousePressed(MouseEvent e){
 		        			grille.afficher((e.getX()-1)/50,(e.getY()-1)/50);
 		    				suppr();
-		    				if (choix == 1) 
-		    					joueDeuxHumains();
-		    				//else if(choix == 2)
-		    						//joueOrdiHumain();
+		    				if (choix == 1){joueDeuxHumains();}
+							else if(choix == 2){joueOrdiHumain();}		
 		        		}
 		        });
 			}
@@ -459,5 +448,9 @@ class Game extends JFrame{
 		MouseListener m[] = grille.getMouseListeners(); 
 		if(m.length > 0)
 			grille.removeMouseListener(m[0]);
+	}
+	
+	public void joueOrdiHumain(){
+		return;
 	}
 }

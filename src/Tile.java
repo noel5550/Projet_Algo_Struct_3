@@ -95,6 +95,11 @@ class Tile extends JPanel {
 		symbol.setFont(font);
 		symbol.setForeground(Color.BLACK);
 		add(symbol);
+	}
+	
+	public void setPlayerBase(int playerNum){
+		setTilePlayer(playerNum);
+		setStar();
 	}	
 
 	/**

@@ -40,7 +40,7 @@ class UnionClass{
 	/*
 	*	@brief parcours récursif pour obtenir tous les fils d'un noeud d'une case dont les coordonnées sont données au paramètre
 	*/
-	public ArrayList<Integer> getAllFils(int x, int y){
+	public ArrayList<Integer> getAllUnion(int x, int y){
 		
 		int size = union_.get(x+y*size_).getFils().size();
 
@@ -48,7 +48,7 @@ class UnionClass{
 			ArrayList<Integer> tmp = new ArrayList<Integer>();
 			tmp.addAll(union_.get(x+y*size_).getFils());
 			for (int i = 0; i < size; ++i)
-				tmp.addAll(getAllFils(tmp.get(i)%size_, tmp.get(i)/size_));
+				tmp.addAll(getAllUnion(tmp.get(i)%size_, tmp.get(i)/size_));
 
 			return tmp;
 		}else{return (new ArrayList<Integer>());} /* Condition d'arret */
@@ -81,11 +81,11 @@ class UnionClass{
 		
 		int tile1Shorten = classUnion(x1,y1);
 		int tile2Shorten = classUnion(x2,y2);
-		int tv = getAllFils(tile1Shorten%size_, tile1Shorten/size_).size();
-		int tw = getAllFils(tile2Shorten%size_, tile2Shorten/size_).size();
+		int tv = getAllUnion(tile1Shorten%size_, tile1Shorten/size_).size();
+		int tw = getAllUnion(tile2Shorten%size_, tile2Shorten/size_).size();
 
 
-		if(getAllFils(tile1Shorten%size_, tile1Shorten/size_).size() >= getAllFils(tile2Shorten%size_, tile2Shorten/size_).size()){
+		if(getAllUnion(tile1Shorten%size_, tile1Shorten/size_).size() >= getAllUnion(tile2Shorten%size_, tile2Shorten/size_).size()){
 			union_.get(tile2Shorten).setPere(tile1Shorten);
 			union_.get(tile1Shorten).ajouterFils(tile2Shorten);
 		}else{
