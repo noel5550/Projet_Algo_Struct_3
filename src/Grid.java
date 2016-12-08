@@ -293,67 +293,7 @@ class Grid extends JPanel {
 		if((xdeb == xarr)&&(ydeb == yarr)){
 			return result;
 		}else{
-			/*
-			*	Si tileDeb se trouve au SW de tileArr
-			*/
-			if(((xarr - xdeb)>0) && ((yarr - ydeb)>0)){
-				++xdeb;
-				++ydeb;
-				++res;
-				
-			/*
-			*	Si tileDeb se trouve au NE de tileArr
-			*/
-			}else if (((xarr - xdeb)<0) && ((yarr - ydeb)<0)){
-				--xdeb;
-				--ydeb;
-				++res;	
-				
-						/*
-			*	Si tileDeb se trouve au SE de tileArr
-			*/
-			if(((xarr - xdeb)<0) && ((yarr - ydeb)>0)){
-				--xdeb;
-				++ydeb;
-				++res;
-				
-			/*
-			*	Si tileDeb se trouve au NW de tileArr
-			*/
-			}else if (((xarr - xdeb)>0) && ((yarr - ydeb)<0)){
-				++xdeb;
-				--ydeb;
-				++res;	
-
-			/*
-			*	Si tileDeb se trouve au Nord de tileArr
-			*/				
-			}else if (((xarr - xdeb) == 0) && ((yarr - ydeb)<0)){
-				--ydeb;
-				++res;	
-			/*
-			*	Si tileDeb se trouve au Sud de tileArr
-			*/					
-			}else if (((xarr - xdeb) == 0) && ((yarr - ydeb)>0)){
-				++ydeb;
-				++res;
-				
-			/*
-			*	Si tileDeb se trouve a l'Ouest de tileArr
-			*/	
-			}else if (((xarr - xdeb)>0) && ((yarr - ydeb)==0)){
-				++xdeb;
-				++res;
-				
-			/*
-			*	Si tileDeb se trouve a l'Est de tileArr
-			*/		
-			}else if (((xarr - xdeb)<0) && ((yarr - ydeb)==0)){
-				--xdeb;
-				++res;
-			}
-				
-			/*
+			
 			if ((xarr - xdeb) < 0) { --xdeb; }			// TRY ME
 			else if ((xarr - xdeb) > 0) { ++xdeb; }			// remplacer les else if pour cas N/S/E/W
 			
@@ -362,7 +302,6 @@ class Grid extends JPanel {
 			
 			++res;
 			
-			*/
 			pathfind(xdeb, ydeb, xarr, yarr, res);
 		}
 	}
