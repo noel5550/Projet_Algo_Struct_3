@@ -61,6 +61,7 @@ class Grid {
 			if(fils.equals(pere) == false){
 				int starSum = pere.getNbEtoiles() + fils.getNbEtoiles();
 				pere.setStar(starSum);
+				fils.setStar(starSum);
 			}
 		}
 	}
@@ -350,6 +351,7 @@ class Grid {
 			randomY = randy.nextInt((size_ - 1 - 0) + 1) + 0;
 			tileTab_[randomX][randomY].colorerCase(1);
 			tileTab_[randomX][randomY].setStar(tileTab_[randomX][randomY].getNbEtoiles() + 1);
+			tileTab_[randomX][randomY].setBase();
 			System.out.println("Une base dans : ( " + randomX +" , "+ randomY + " )");
 			
 			/* ajouter bases player 2 */
@@ -359,6 +361,7 @@ class Grid {
 			randomY = randy.nextInt((size_ - 1 - 0) + 1) + 0;
 			tileTab_[randomX][randomY].colorerCase(2);
 			tileTab_[randomX][randomY].setStar(tileTab_[randomX][randomY].getNbEtoiles() + 1);
+			tileTab_[randomX][randomY].setBase();
 			System.out.println("Une base dans : ( " + randomX +" , "+ randomY + " )");
 		}
 		return playerInput;
@@ -369,12 +372,16 @@ class Grid {
 		int y = tile.getY();
 		if(playerNum == 1 && tileTab_[x][y].getNbEtoiles() > playerScore1_ ){
 			playerScore1_ = tileTab_[x][y].getNbEtoiles();
+			System.out.println("score Player1  " + playerScore1_);
+			System.out.println("score Player2  " + playerScore2_);
 		}else if(playerNum == 1 && tileTab_[x][y].getNbEtoiles() == playerScore1_ ){
 			playerScore1_ += tileTab_[x][y].getNbEtoiles();
 			
 			
-		}else if(playerNum == 2 && tileTab_[x][y].getNbEtoiles() > playerScore2_ ){
+		}else if(playerNum == 2 && tileTab_[x][y].getNbEtoiles() > playerScore2_){
 			playerScore2_ = tileTab_[x][y].getNbEtoiles();
+			System.out.println("score Player1  " + playerScore1_);
+			System.out.println("score Player2  " + playerScore2_);
 		}else if(playerNum == 2 && tileTab_[x][y].getNbEtoiles() == playerScore2_ ){
 			playerScore2_ += tileTab_[x][y].getNbEtoiles();
 		}
@@ -416,7 +423,7 @@ class Grid {
 				affich += y;
 			}
 			for(int x = 0; x< size_; ++x){
-				if(tileTab_[x][y].getNbEtoiles() < 1){
+				if(tileTab_[x][y].getIsBase() == false){
 					if(tileTab_[x][y].getPlayerNum() != 1 && tileTab_[x][y].getPlayerNum() != 2){ affich += " ⬜ "; }
 					if(tileTab_[x][y].getPlayerNum() == 1 ){ affich += couleurPlayer1_ + " ⬜ " + couleurVide_; }
 					if(tileTab_[x][y].getPlayerNum() == 2 ){ affich += couleurPlayer2_ + " ⬜ " + couleurVide_; }
@@ -468,9 +475,9 @@ class Grid {
 			action = tileTab_[x][y].colorerCase(playerNum);
 			checker = relieComposantes(tileTab_[x][y], playerNum);
 			if(checker){
-				System.out.println("Vous avez lié quelque chose !");
+				System.out.println("Relie Composantes : Vous avez lié quelque chose !");
 			}else{
-				System.out.println("Pas de reliage composantes ! ");
+				System.out.println("Relie Composantes : Pas de reliage composantes ! ");
 			}
 			
 			if (x == 0 && y == 0){
@@ -533,8 +540,8 @@ class Grid {
 		 		else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y+1];}		 	
 		 		else{tileTest = tileTab_[x][y];}
 			}
-			
-			System.out.println(existeCheminCases(tileTest, tileTab_[x][y], playerNum));
+			System.out.println("Existe Chemin Cases? \n");
+			System.out.println(!existeCheminCases(tileTest, tileTab_[x][y], playerNum));
 			
 			//afficheComposante(tileTest, tileTab_[x][y], playerNum);
 
