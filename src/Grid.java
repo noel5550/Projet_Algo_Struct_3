@@ -1,6 +1,7 @@
 import java.util.Random;
 import java.util.Scanner;
 import java.lang.String;
+import java.util.ArrayList;
 
 /*
 * <h1>Grid</h1>
@@ -52,10 +53,13 @@ class Grid {
 	public Tile classe(Tile tile){
 		Tile temp = tile;
 		if (tile.getPere() != null){
+
 			while(temp.getPere() != null){
 				temp = temp.getPere();
 			}
-			tile.setPere() = temp;
+			tile.setPere(temp);
+		}else{
+
 		}
 		return temp;
 	}
@@ -65,14 +69,19 @@ class Grid {
 	*/
 	public void union(Tile tile1, Tile tile2){
 		Tile pere1 = classe(tile1);
+		//System.out.println("888888888888888888"); //Debug
 		Tile pere2 = classe(tile2);
-		
-		pere2.setPere(pere1);
+		//System.out.println("11111111111111111111"); //Debug
+		if(pere1.getPlayerNum() == pere2.getPlayerNum() ){
+			//System.out.println("77777777777777777"); //Debug
+			pere2.setPere(pere1);
+			
+		}
 	}
 	
 	/*
 	* Méthode pour la question 3 et méthode existeCheminCases
-	* Deux cases de meme pere ont forcement la meme couleur
+	* Deux cases de meme identifiant de classe ont forcement la meme couleur
 	*/
 	
 	public boolean existeCheminCases(Tile tileStart, Tile tileEnd){
@@ -80,7 +89,7 @@ class Grid {
 	}	
 	
 	/*
-	* Méthode pour la question 2 et méthode récursive afficheComposante
+	* Méthode pour la question 2
 	* On affiche les cases parcourus dans les composantes	
 	*/
 	public void afficheComposante(Tile tile, int playerNum){
@@ -100,11 +109,11 @@ class Grid {
 		}else if(y == size_ - 1){
 			maxy = 0;
 		}
-		for(minx; minx <= maxx; ++minxx){
-			for(miny; miny <= maxy; ++miny){
-				if(minx != 0 || miny != 0){
-					if(tileTab_[x + minx][y + miny].getPlayerNum() == tileTab_[x][y].getPlayerNum()){
-						tileTest.add(tileTab_[x+minx][y+miny]);
+		for(int i = minx; i <= maxx; ++i){
+			for(int j = miny; j <= maxy; ++j){
+				if(i != 0 || j != 0){
+					if(tileTab_[x + i][y + j].getPlayerNum() == playerNum){
+						tileTest.add(tileTab_[x+i][y+j]);
 					}
 				}
 			}
@@ -114,17 +123,22 @@ class Grid {
 		for(int i = 0; i < tileTest.size(); ++i){
 			if(tileTest.get(i).getPlayerNum() != playerNum){
 				tileTest.remove(i);
+				System.out.println(i);
 			}
 		}
 		
 		for(int i = 0; i < tileTest.size(); ++i){
-			for(int j = i; j < tileTest.size() && dejaMis == false; ++j){
+			for(int j = i+1; j < tileTest.size() && dejaMis == false; ++j){
 				if(classe(tileTest.get(i)) == classe(tileTest.get(j))){
 					dejaMis = true;
+									
 				}
 			}
-			if (!dejaMis) tileStock.add(tileTest.get(i));
+			if (!dejaMis) {
+				tileStock.add(tileTest.get(i));
+			}
 			dejaMis = false;
+			
 		}		
 		
 		if(tileStock.size() >= 2){
@@ -186,19 +200,19 @@ class Grid {
 	
 	
 	/*
-	* Méthode pour la question 5 et méthode nombreEtoiles
+	* Méthode pour la question 5 et méthode nombresEtoiles
 	* On parcours récursivement les fils de l'identifiant de la classe union de tile et retourne la somme de leurs étoiles
 	*/
 	public int nombresEtoiles(Tile tile){
 		Tile temp = classe(tile);
 		int result = 0;		
 		for(int i = 0; i < temp.getFils().size(); ++i){
-			result += nombreEtoiles(temp.getFils().get(i);
+			result += nombresEtoiles(temp.getFils().get(i));
 		}
 		if(temp.getIsBase()){
 			++result;
 		}
-		
+		//System.out.println("nbétoile " + result);				//DEBUG
 		return result;
 	}
 	
@@ -207,8 +221,8 @@ class Grid {
 	* S'explique tout seul
 	*/
 	public void afficherScore(int playerNum){
-		ArrayList<Tile> tileStock = new ArrayList<Tile>;
-		ArrayList<Tile> tileScore = new ArrayList<Tile>;
+		ArrayList<Tile> tileStock = new ArrayList<Tile>();
+		ArrayList<Tile> tileScore = new ArrayList<Tile>();
 		boolean dejaMis = false;
 		int scoreCount = 0;
 		
@@ -216,37 +230,53 @@ class Grid {
 		for(int x = 0; x < size_ ; ++x){
 			for(int y = 0; y < size_ ; ++y){
 				if((tileTab_[x][y].getPlayerNum() == playerNum) && tileTab_[x][y].getIsBase()){
-					tileStock.get(tileTab_[x][y]);
+					tileStock.add(tileTab_[x][y]);
 				}				
 			}
 		}
 		
 		for(int i = 0; i < tileStock.size(); ++i){
-			for(int j = i; j < tileStock.size() && dejaMis == false; ++j){
-				if(classe(tileTest.get(i)) == classe(tileTest.get(j))){
+			for(int j = i+1; j < tileStock.size() && dejaMis == false; ++j){
+				/*System.out.println(classe(tileStock.get(i)) +"   "+ classe(tileStock.get(j))); //Debug*/
+				if(classe(tileStock.get(i)) == classe(tileStock.get(j))){
+					/*System.out.println("///////"+dejaMis); ////////////////DEBUG*/
 					dejaMis = true;
-				}
+				}/*else{
+					System.out.println("============="+dejaMis); //Debug
+				}*/
 			}
 			if (!dejaMis) tileScore.add(tileStock.get(i));
+			/*for(int k = 0; k<tileScore.size(); ++k){ //FOR DEBUG
+				System.out.println("eeeeee" + tileScore.get(k).getX()); //Debug
+			}*/
 			dejaMis = false;
 		}
 		
 		/* parcours de tileScore */
 		for(int i = 0; i < tileScore.size(); ++i){
-			scoreCount += nombresEtoiles(tileScore.get(i));
+			//System.out.println("============="+tileScore.size()); //Debug
+			//System.out.println("oooooooooooo " + scoreCount + " iiii " + nombresEtoiles(tileScore.get(i)));//debug
+			scoreCount += nombresEtoiles(tileScore.get(i))-1;
 		}
 		
 		System.out.println("(afficherScore) Le score de joueur " + playerNum + " est : " + scoreCount );
+		
+		if(playerNum == 1){
+			playerScore1_ = scoreCount;
+		}else if(playerNum == 2){
+			playerScore2_ = scoreCount;
+		}
+		
 	}
 		
 	/*
 	* Méthode relie composantes
 	*/
-	public void relieComposantes(Tile tile1, int playerNum){
+	public boolean relieComposantes(Tile tile, int playerNum){
 		ArrayList<Tile> tileTest = new ArrayList<Tile>();
 		ArrayList<Tile> tileStock = new ArrayList<Tile>();
 		boolean result = false;
-		boolean dejaMis;
+		boolean dejaMis = false;
 		int minx = -1, miny = -1, maxx = 1, maxy = 1;
 		int x = tile.getX();
 		int y = tile.getY();
@@ -260,11 +290,11 @@ class Grid {
 		}else if(y == size_ - 1){
 			maxy = 0;
 		}
-		for(minx; minx <= maxx; ++minxx){
-			for(miny; miny <= maxy; ++miny){
-				if(minx != 0 || miny != 0){
-					if(tileTab_[x + minx][y + miny].getPlayerNum() == tileTab_[x][y].getPlayerNum()){
-						tileTest.add(tileTab_[x+minx][y+miny]);
+		for(int i = minx; i <= maxx; ++i){
+			for(int j = miny; j <= maxy; ++j){
+				if(i != 0 || j != 0){
+					if(tileTab_[x + i][y + j].getPlayerNum() == tileTab_[x][y].getPlayerNum()){
+						tileTest.add(tileTab_[x+i][y+j]);
 					}
 				}
 			}
@@ -277,7 +307,7 @@ class Grid {
 		}
 		
 		for(int i = 0; i < tileTest.size(); ++i){
-			for(int j = i; j < tileTest.size() && dejaMis == false; ++j){
+			for(int j = i+1; j < tileTest.size() && dejaMis == false; ++j){
 				if(classe(tileTest.get(i)) == classe(tileTest.get(j))){
 					dejaMis = true;
 				}
@@ -301,35 +331,42 @@ class Grid {
 		Random randy;
 		int randomX;
 		int randomY;
+		
 		ArrayList<Integer> etoiles = new ArrayList<Integer>();
 		
 		tileTab_ = new Tile[size_][size_];
 		for(int x = 0; x < size_; ++x){
 			for(int y = 0; y < size_ ; ++y){
-				tileTab_[x][y] = new Tile(x, y, 0);
+				tileTab_[x][y] = new Tile(x, y);
 			}
 		}
 		
 		System.out.println("Donnez le nombre de bases.");
 		playerInput = keyboardInput_.nextInt();
+
 		for(int cmptr = 0; cmptr < playerInput; ++cmptr){
 			/* ajouter bases player 1 */
 			randy = new Random();			
 			randomX = randy.nextInt((size_ - 1 - 0) + 1) + 0;
+			/*
 			for(int i = 0; i<etoiles.size(); i+=2){
 				if(randomX - etoiles.get(i) < 2 && randomX - etoiles.get(i) > -2 ){
 					randomX = randy.nextInt((size_ - 1 - 0) + 1) + 0;
+					System.out.println("for1");
 				}
 			}
-			etoile.add(randomX);
+			etoiles.add(randomX);
+			*/
 			randy = new Random();
 			randomY = randy.nextInt((size_ - 1 - 0) + 1) + 0;			
-			for(int i = 1; i<etoiles.size(); i+=2){
+			/*for(int i = 1; i<etoiles.size(); i+=2){
 				if(randomY - etoiles.get(i) < 2 && randomY - etoiles.get(i) > -2 ){
 					randomY = randy.nextInt((size_ - 1 - 0) + 1) + 0;
+					System.out.println("for2");
 				}
 			}
-			etoile.add(randomY);
+			etoiles.add(randomY);
+			*/
 			tileTab_[randomX][randomY].colorerCase(1);
 			tileTab_[randomX][randomY].setBase();
 			System.out.println("Une base dans : ( " + randomX +" , "+ randomY + " )");
@@ -337,8 +374,26 @@ class Grid {
 			/* ajouter bases player 2 */
 			randy = new Random();
 			randomX = randy.nextInt((size_ - 1 - 0) + 1) + 0;
+			/*
+			for(int i = 0; i<etoiles.size(); i+=2){
+				if(randomX - etoiles.get(i) < 2 && randomX - etoiles.get(i) > -2 ){
+					randomX = randy.nextInt((size_ - 1 - 0) + 1) + 0;
+					System.out.println("for1");
+				}
+			}
+			etoiles.add(randomX);
+			*/
 			randy = new Random();
-			randomY = randy.nextInt((size_ - 1 - 0) + 1) + 0;
+			randomY = randy.nextInt((size_ - 1 - 0) + 1) + 0;		
+			/*
+			for(int i = 1; i<etoiles.size(); i+=2){
+				if(randomY - etoiles.get(i) < 2 && randomY - etoiles.get(i) > -2 ){
+					randomY = randy.nextInt((size_ - 1 - 0) + 1) + 0;
+					System.out.println("for2");
+				}
+			}
+			etoiles.add(randomY);
+			*/
 			tileTab_[randomX][randomY].colorerCase(2);
 			tileTab_[randomX][randomY].setBase();
 			System.out.println("Une base dans : ( " + randomX +" , "+ randomY + " )");
@@ -410,193 +465,157 @@ class Grid {
 		boolean action = false;
 		boolean checker;
 		int playerNum = 0;
-		int x, y;
+		int x, y, choix;
+		int x1,x2,y1,y2;
 		int turnNum = 0;
 		Tile tileTest;
 		int starNumTile;
 		int starNumVoisin;
+		playerScore1_ = 0;
+		playerScore2_ = 0;
 		
 		while(!gameOngoing){
 			++turnNum;
 			/* choix des joueurs */
 			if(turnNum % 2 == 1){playerNum = 1;}
-			else /*if(turnNum % 2 == 0)*/{playerNum = 2;}
+			else{playerNum = 2;}
 			
 			/* affichage ecran */
 			display(turnNum);
 			afficherScore(playerNum);
 			
+			System.out.println("Choisissez :");
+			System.out.println("1 pour Menu");
+			System.out.println("2 pour jouer :");
+			choix = keyboardInput_.nextInt();
+			if(choix == 1){
+				System.out.println("===============MENU fonctions choisissez quoi choisir ============= \n");
+				System.out.println("1 : AfficheComposante : \n");
+				System.out.println("2 : ExisteCheminCases : \n");
+				System.out.println("3 : RelierCasesMin : \n");
+				System.out.println("4 : nombresEtoiles : \n");
+				System.out.println("5 : RelieComposantes : \n");
+				System.out.println("============================================================= \n");
+				
+				System.out.println("Donnez votre choix");
+				choix = keyboardInput_.nextInt();
+				
+				switch(choix) {
+        			case 1 :
+        				System.out.println("Donnez x");
+						x = keyboardInput_.nextInt();
+						System.out.println("Donnez y");
+						y = keyboardInput_.nextInt();
+            			afficheComposante(tileTab_[x][y], playerNum);
+            		break;
+         			case 2 :
+         				System.out.println("Donnez x de la 1ere case :");
+						x1 = keyboardInput_.nextInt();
+						System.out.println("Donnez y de la 1ere case :");
+						y1 = keyboardInput_.nextInt();
+            			System.out.println("Donnez x de la 2eme case :");
+						x2 = keyboardInput_.nextInt();
+						System.out.println("Donnez y de la 2eme case :");
+						y2 = keyboardInput_.nextInt();
+            			if(existeCheminCases(tileTab_[x1][y1], tileTab_[x2][y2])){
+            				System.out.println("Un chemin existe.");
+            			}else{
+            				System.out.println("Pas de chemin.");
+            			}
+            		break;
+        			case 3 :        			
+        				System.out.println("Donnez x de la 1ere case :");
+						x1 = keyboardInput_.nextInt();
+						System.out.println("Donnez y de la 1ere case :");
+						y1 = keyboardInput_.nextInt();
+            			System.out.println("Donnez x de la 2eme case :");
+						x2 = keyboardInput_.nextInt();
+						System.out.println("Donnez y de la 2eme case :");
+						y2 = keyboardInput_.nextInt();
+            			System.out.println("Il y a " + relierCasesMin(tileTab_[x1][y1], tileTab_[x2][y2]) + " cases à parcourir.");
+            		break;
+         			case 4 :
+         				System.out.println("Donnez x");
+						x = keyboardInput_.nextInt();
+						System.out.println("Donnez y");
+						y = keyboardInput_.nextInt();
+						System.out.println("Il y a " + nombresEtoiles(tileTab_[x][y]) +" etoiles içi.");            			
+            		break;
+         			case 5 :
+         				System.out.println("Donnez x");
+						x = keyboardInput_.nextInt();
+						System.out.println("Donnez y");
+						y = keyboardInput_.nextInt();
+         				if(relieComposantes(tileTab_[x][y], playerNum)){
+         					System.out.println("C'est lié");
+         				}else{
+         					System.out.println("Ce n'est pas lié");
+         				}
+         				
+            		break;
+         		default :
+            		System.out.println("Choix invalide.");
+      }
+			}
+			
 			/******* Selection Menu si x < 0 *******/
-			System.out.println("===============MENU fonctions, mettre négatif sur saisie de x ============= \n");
-			System.out.println("x == -1 : AfficheComposante : \n");
-			System.out.println("x == -2 :ExisteCheminCases : \n");
-			System.out.println("x == -3 :RelierCasesMin : \n");
-			System.out.println("x == -4 :nombresEtoiles : \n");
-			System.out.println("x == -5 :RelieComposantes : \n");
-			System.out.println("============================================================= \n");
+
 			
 			/* input du joueur */
 			System.out.println("Donnez x");
 			x = keyboardInput_.nextInt();
+			System.out.println("Donnez y");
+			y = keyboardInput_.nextInt();
+			action = tileTab_[x][y].colorerCase(playerNum);
 			
-
+			int minx = -1, miny = -1, maxx = 1, maxy = 1;
 			
-			if(x < 0){
-				int x1, x2, y1, y2;
-				if(x == -1){ //afficheComposante
-										
-					System.out.println("Donnez x de la 1ere case");
-					x1 = keyboardInput_.nextInt();
-					System.out.println("Donnez y de la 1ere case");
-					y1 = keyboardInput_.nextInt();
-					System.out.println("Donnez x de la 2eme case");
-					x2 = keyboardInput_.nextInt();
-					System.out.println("Donnez y de la 2eme case");
-					y2 = keyboardInput_.nextInt();
-					
-					afficheComposante(tileTab_[x1][y1], tileTab_[x2][y2], playerNum); 
-					
-				}else if(x == -2){ //existeCheminCases
-									
-					System.out.println("Donnez x du 1ere case");
-					x1 = keyboardInput_.nextInt();
-					System.out.println("Donnez y du 1ere case");
-					y1 = keyboardInput_.nextInt();
-					System.out.println("Donnez x du 2eme case");
-					x2 = keyboardInput_.nextInt();
-					System.out.println("Donnez y du 2eme case");
-					y2 = keyboardInput_.nextInt();
-					
-					existeCheminCases(tileTab_[x1][y1], tileTab_[x2][y2], playerNum);
-				}else if(x == -3){ //RelierCasesMin
-					System.out.println("Donnez x du 1ere case");
-					x1 = keyboardInput_.nextInt();
-					System.out.println("Donnez y du 1ere case");
-					y1 = keyboardInput_.nextInt();
-					System.out.println("Donnez x du 2eme case");
-					x2 = keyboardInput_.nextInt();
-					System.out.println("Donnez y du 2eme case");
-					y2 = keyboardInput_.nextInt();
-					
-					System.out.println("Distance entre les deux cases : " + relierCasesMin(tileTab_[x1][y1], tileTab_[x2][y2]));
-				}else if(x == -4){ //nombresEtoiles
-					System.out.println("Donnez x ");
-					x1 = keyboardInput_.nextInt();
-					System.out.println("Donnez y ");
-					y1 = keyboardInput_.nextInt();
-					
-					nombresEtoiles(tileTab_[x1][y1]);
-				}else if(x == -5){ //RelieComposantes
-				
-					System.out.println("Donnez x ");
-					x1 = keyboardInput_.nextInt();
-					System.out.println("Donnez y ");
-					y1 = keyboardInput_.nextInt();
-					
-					if(relieComposantes(tileTab_[x1][y1], playerNum)){
-						System.out.println("Composantes reliés");
-					}else{
-						System.out.println("Composantes pas reliés ");
+			
+	/*		for(int xFor = 0; xFor< size_ ; ++xFor){
+				for (int yFor = 0; yFor<size_ ; ++yFor){
+					minx = -1;
+					miny = -1;
+					maxx = 1;
+					maxy = 1;
+					*/
+					int xFor = x, yFor = y;
+					if( xFor == 0){
+						minx = 0;
+					}else if(xFor == size_ - 1){
+						maxx = 0;
 					}
-				}
-			}else if(x>=0){
-			
-				System.out.println("Donnez y");
-				y = keyboardInput_.nextInt();
-				action = tileTab_[x][y].colorerCase(playerNum);
-				checker = relieComposantes(tileTab_[x][y], playerNum);
-				if(checker){
-					System.out.println("Relie Composantes : Vous avez lié quelque chose !");
-				}else{
-					System.out.println("Relie Composantes : Pas de reliage composantes ! ");
-				}
-			
-				if (x == 0 && y == 0){
-					if (tileTab_[x+1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest =tileTab_[x+1][y+1];}
-					else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y+1];}
-					else if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y];}
-					else{tileTest = tileTab_[x][y];}
-				}else if (x == 0 && y == size_-1){
-					if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y];}
-				 	else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y-1];}
-				 	else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y-1];}
-				 	else{tileTest = tileTab_[x][y];}
-				}else if (x == size_-1 && y == 0){
-					if (tileTab_[x][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y];}
-					else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y+1];}
-					else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y+1];}
-					else if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y];}
-					else{tileTest = tileTab_[x][y];}
-				}else if (x == 0){
-					if (tileTab_[x+1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y+1];}
-					else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y-1];}
-				 	else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y+1];}
-				 	else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y-1];}
-				 	else if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y];}
-				 	else{tileTest = tileTab_[x][y];}
-				}else if (y == 0){
-					if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y];}
-					else if (tileTab_[x+1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y+1];}
-					else if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y];}
-					else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y+1];}
-					else if  (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y+1];}
-					else{tileTest = tileTab_[x][y];}
-				}else if (x == size_-1 && y == size_-1){
-					if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y];}
-					else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y-1];}
-					else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y-1];}
-					else{tileTest = tileTab_[x][y];}
-				}else if (x == size_-1){
-					if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y];}
-					else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y-1];}
-				 	else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y+1];}
-				 	else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y-1];}
-				 	else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y+1];}
-				 	else{tileTest = tileTab_[x][y];}
-				}else if (y == size_-1){
-					if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y];}
-					else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y-1];}
-					else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y-1];}
-					else if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y];}
-					else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y-1];}			
-					else{tileTest = tileTab_[x][y];}
-				}else{
-					if (tileTab_[x+1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y+1];}
-					else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y-1];}
-					else if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y];}
-					else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y+1];}
-					else if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y];}
-				 	else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y-1];}		 	
-					 	else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y-1];}
-		 			else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y+1];}		 	
-		 			else{tileTest = tileTab_[x][y];}
-				}
-				System.out.println("Existe Chemin Cases? \n");
-				System.out.println(!existeCheminCases(tileTest, tileTab_[x][y], playerNum));
-			
-				//afficheComposante(tileTest, tileTab_[x][y], playerNum);
-		
-				starNumTile = tileTab_[x][y].getNbEtoiles();
-				starNumVoisin = tileTest.getNbEtoiles();
-				
-				if(starNumTile > starNumVoisin){
-					unionFind(x, y, tileTest.getX(), tileTest.getY());			
-				}else{
-					unionFind(tileTest.getX(), tileTest.getY(), x, y);
-				}
-				
-				System.out.println("***************");
-				nombresEtoiles(tileTab_[x][y]);
-				System.out.println("***************");
-				scorerCounter(tileTab_[x][y], playerNum);
-				if(playerScore1_ == bases){
-					System.out.println("Victoire player 1");
-					gameOngoing = true;
-				}else if(playerScore2_ == bases){
-					System.out.println("Victoire player 2");
-					gameOngoing = true;
-				}			
-			}
+					if( yFor == 0){
+						miny = 0;
+					}else if(yFor == size_ - 1){
+						maxy = 0;
+					}
+					//System.out.println("ENTREE EN BOUCLE INFERNALE");//Debug
+					for(int i = minx; i <= maxx; ++i){
+						for(int j = miny; j <= maxy; ++j){
+						//System.out.println(xFor +" " + yFor+ " " + i + " " + j); //Debug
+							if(i != 0 || j != 0){
+								if(tileTab_[xFor + i][yFor + j].getPlayerNum() == playerNum){
+									union(tileTab_[x][y], tileTab_[xFor+i][yFor+j]);
+			//						System.out.println("555555555555555555"); //Debug
+								}
+			//				System.out.println("55511111111555555555"); //Debug
+							}
+			//			System.out.println("5555522222222255555"); //Debug
+						}
+			//		System.out.println("555555333333335555555"); //Debug
+					}
+			//	System.out.println("55555554444444444555555"); //Debug
+/*				}
+			System.out.println("55555556666666666666555"); //Debug
+			} */
+			//System.out.println("66666666666666666"); //Debug
+			if(playerScore1_ == bases){
+				System.out.println("Victoire player 1");
+				gameOngoing = true;
+			}else if(playerScore2_ == bases){
+				System.out.println("Victoire player 2");
+				gameOngoing = true;
+			}			
 		}
 	}
 
