@@ -58,8 +58,8 @@ class Grid {
 		*/
 		if(pere.getPlayerNum() == fils.getPlayerNum() && (pere.getPlayerNum() == 1 || pere.getPlayerNum() == 2)){
 			if(fils.equals(pere) == false){
-				int starSum = pere.getStarNb() + fils.getStarNb();
-				pere.setNbEtoile(starSum);
+				int starSum = pere.getNbEtoiles() + fils.getNbEtoiles();
+				pere.setStar(starSum);
 			}
 		}
 	}
@@ -83,7 +83,7 @@ class Grid {
 	* Méthode pour la question 3 et méthode existeCheminCases
 	*/
 	
-	public void existeCheminCases(Tile tileStart, Tile tileEnd, int playerNum){
+	public boolean existeCheminCases(Tile tileStart, Tile tileEnd, int playerNum){
 		boolean memeUnionFind;
 		boolean memePlayer;
 		/* compression des deux Tiles */
@@ -214,9 +214,9 @@ class Grid {
 	* On regarde combiend d'étoiles à cette Tile
 	*/
 	public void nombresEtoiles(Tile tile){
-		int playerNum = tile1.getPlayerNum();
-		int x = tile1.getX();
-		int y = tile1.getY();
+		int playerNum = tile.getPlayerNum();
+		int x = tile.getX();
+		int y = tile.getY();
 		int nbEtoiles = tileTab_[x][y].getNbEtoiles();
 		
 		System.out.println("Le nombre d'étoiles est " + nbEtoiles);
@@ -231,9 +231,9 @@ class Grid {
 			System.out.println("Hé mais t'es pas dans le jeu!");
 		}		
 		if(playerNum == 1){
-			System.out.println("Score player 1 : " playerScore1_);
+			System.out.println("Score player 1 : " + playerScore1_);
 		}else if (playerNum == 2){
-			System.out.println("Score player 2 : " playerScore2_);
+			System.out.println("Score player 2 : " + playerScore2_);
 		}
 	}
 
@@ -335,7 +335,7 @@ class Grid {
 		tileTab_ = new Tile[size_][size_];
 		for(int x = 0; x < size_; ++x){
 			for(int y = 0; y < size_ ; ++y){
-				tileTab_[x][y] = new Tile(x, y, 0)
+				tileTab_[x][y] = new Tile(x, y, 0);
 			}
 		}
 		
@@ -367,13 +367,13 @@ class Grid {
 		int x = tile.getX();
 		int y = tile.getY();
 		if(playerNum == 1 && tileTab_[x][y].getNbEtoiles() > playerScore2_ ){
-			playerScore2_ = tileTab_[x][y].getNbEtoile();
+			playerScore2_ = tileTab_[x][y].getNbEtoiles();
 		}else if(playerNum == 2 && tileTab_[x][y].getNbEtoiles() > playerScore1_ ){
-			playerScore1_ = tileTab_[x][y].getNbEtoile();
+			playerScore1_ = tileTab_[x][y].getNbEtoiles();
 		}else if(playerNum == 1 && tileTab_[x][y].getNbEtoiles() == playerScore2_ ){
-			playerScore2_ += tileTab_[x][y].getNbEtoile();
+			playerScore2_ += tileTab_[x][y].getNbEtoiles();
 		}else if(playerNum == 2 && tileTab_[x][y].getNbEtoiles() == playerScore1_ ){
-			playerScore2_ += tileTab_[x][y].getNbEtoile();
+			playerScore2_ += tileTab_[x][y].getNbEtoiles();
 		}
 	}
 	
@@ -392,13 +392,13 @@ class Grid {
 		for(int x = 0; x < size_; ++x){
 			for(int y = 0; y< size_; ++y){
 				if(tileTab_[x][y].getNbEtoiles() < 1){
-					if(tileTab_[x][y].getPLayerNum() != 1 && tileTab_[x][y].getPLayerNum() != 2){ affich += " ⬜ "; }
-					if(tileTab_[x][y].getPLayerNum() == 1 ){ affich += couleurPlayer1_ + " ⬜ " + couleurVide_; }
-					if(tileTab_[x][y].getPLayerNum() == 2 ){ affich += couleurPlayer2_ + " ⬜ " + couleurVide_; }
+					if(tileTab_[x][y].getPlayerNum() != 1 && tileTab_[x][y].getPlayerNum() != 2){ affich += " ⬜ "; }
+					if(tileTab_[x][y].getPlayerNum() == 1 ){ affich += couleurPlayer1_ + " ⬜ " + couleurVide_; }
+					if(tileTab_[x][y].getPlayerNum() == 2 ){ affich += couleurPlayer2_ + " ⬜ " + couleurVide_; }
 				}else{
-					if(tileTab_[x][y].getPLayerNum() != 1 && tileTab_[x][y].getPLayerNum() != 2){ affich += " * "; }
-					if(tileTab_[x][y].getPLayerNum() == 1 ){ affich += couleurPlayer1_ + " * " + couleurVide_; }
-					if(tileTab_[x][y].getPLayerNum() == 2 ){ affich += couleurPlayer2_ + " * " + couleurVide_; }
+					if(tileTab_[x][y].getPlayerNum() != 1 && tileTab_[x][y].getPlayerNum() != 2){ affich += " * "; }
+					if(tileTab_[x][y].getPlayerNum() == 1 ){ affich += couleurPlayer1_ + " * " + couleurVide_; }
+					if(tileTab_[x][y].getPlayerNum() == 2 ){ affich += couleurPlayer2_ + " * " + couleurVide_; }
 				}
 			}
 			affich += "\n";
@@ -523,10 +523,10 @@ class Grid {
 			scorerCounter(tileTab_[x][y], playerNum);
 			if(playerScore1_ == bases){
 				System.out.println("Victoire player 1");
-				fin = false;
+				gameOngoing = false;
 			}else if(playerScore2_ == bases){
 				System.out.println("Victoire player 2");
-				fin = false;
+				gameOngoing = false;
 			}			
 		}
 	}
