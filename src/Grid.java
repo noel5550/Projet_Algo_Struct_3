@@ -301,6 +301,7 @@ class Grid {
 		Random randy;
 		int randomX;
 		int randomY;
+		ArrayList<Integer> etoiles = new ArrayList<Integer>();
 		
 		tileTab_ = new Tile[size_][size_];
 		for(int x = 0; x < size_; ++x){
@@ -315,8 +316,20 @@ class Grid {
 			/* ajouter bases player 1 */
 			randy = new Random();			
 			randomX = randy.nextInt((size_ - 1 - 0) + 1) + 0;
+			for(int i = 0; i<etoiles.size(); i+=2){
+				if(randomX - etoiles.get(i) < 2 && randomX - etoiles.get(i) > -2 ){
+					randomX = randy.nextInt((size_ - 1 - 0) + 1) + 0;
+				}
+			}
+			etoile.add(randomX);
 			randy = new Random();
-			randomY = randy.nextInt((size_ - 1 - 0) + 1) + 0;
+			randomY = randy.nextInt((size_ - 1 - 0) + 1) + 0;			
+			for(int i = 1; i<etoiles.size(); i+=2){
+				if(randomY - etoiles.get(i) < 2 && randomY - etoiles.get(i) > -2 ){
+					randomY = randy.nextInt((size_ - 1 - 0) + 1) + 0;
+				}
+			}
+			etoile.add(randomY);
 			tileTab_[randomX][randomY].colorerCase(1);
 			tileTab_[randomX][randomY].setBase();
 			System.out.println("Une base dans : ( " + randomX +" , "+ randomY + " )");
