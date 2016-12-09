@@ -46,26 +46,6 @@ class Grid {
 	public int getPlayerScore1(){ return playerScore1_;}
 	public int getPlayerScore2(){ return playerScore2_;}
 
-
-	/*
-	* méthode pour unir deux cases et donner le nb d'étoiles (s'il y a) dans le Tile(x2 y2) dans le Tile pere (x1, y1)
-	*/
-	/*public void unionFind(int x1, int y1, int x2, int y2){
-		Tile pere = tileTab_[x1][y1];
-		Tile fils = tileTab_[x2][y2];*/
-		
-		/*
-		* Si fils n'est pas encore dans pere, il va etre dans pere
-		*/
-		/*if(pere.getPlayerNum() == fils.getPlayerNum() && (pere.getPlayerNum() == 1 || pere.getPlayerNum() == 2)){
-			if(fils.equals(pere) == false){
-				int starSum = pere.getNbEtoiles() + fils.getNbEtoiles();
-				pere.setStar(starSum);
-				fils.setStar(starSum);
-			}
-		}
-	}*/
-	
 	/*
 	* Méthode "Classe"
 	*/
@@ -90,23 +70,6 @@ class Grid {
 		pere2.setPere(pere1);
 	}
 	
-	
-	
-	/*
-	* Compression du fil où se trouve Tile(x,y)
-	*/
-	/*public void compress(int x, int y){
-		
-
-		if(tileTab_[x][y].getX() == x || tileTab_[x][y].getY() == y){
-			System.out.println("( " + x + "," + y + " )");
-		}else{
-			tileTab_[x][y] = tileTab_[tileTab_[x][y].getX()][tileTab_[x][y].getY()];
-			compress(tileTab_[x][y].getX(), tileTab_[x][y].getY());
-			System.out.println("( " +x + "," + y + " )");
-		}
-	}*/
-	
 	/*
 	* Méthode pour la question 3 et méthode existeCheminCases
 	*/
@@ -129,10 +92,54 @@ class Grid {
 	* On a un peu triché en utilisant existeCheminCases et en prenant deux Tiles en parametre pour pouvoir le faire en récursif
 	* On affiche les cases parcourus dans les composantes	
 	*/
-	public void afficheComposante(Tile tile){
-		if(tile.getPlayerNum()==1||tile.getPlayerNum()==2){
-			ArrayList<Tile> stock = new ArrayList<Tile>();
+	public void afficheComposante(Tile tile, int playerNum){
+		ArrayList<Tile> tileTest = new ArrayList<Tile>();
+		ArrayList<Tile> tileStock = new ArrayList<Tile>();
+		boolean dejaMis = false;
+		int minx = -1, miny = -1, maxx = 1, maxy = 1;
+		int x = tile.getX();
+		int y = tile.getY();
+		if( x == 0){
+			minx = 0;
+		}else if(x == size_ - 1){
+			maxx = 0;
 		}
+		if( y == 0){
+			miny = 0;
+		}else if(y == size_ - 1){
+			maxy = 0;
+		}
+		for(minx; minx <= maxx; ++minxx){
+			for(miny; miny <= maxy; ++miny){
+				if(minx != 0 || miny != 0){
+					if(tileTab_[x + minx][y + miny].getPlayerNum() == tileTab_[x][y]){
+						tileTest.add(tileTab_[x+minx][y+miny]);
+					}
+				}
+			}
+		}
+		
+		for(int i = 0; i < tileTest.size(); ++i){
+			if(tileTest.get(i).getPlayerNum() != playerNum){
+				tileTest.remove(i);
+			}
+		}
+		
+		for(int i = 0; i < tileTest.size(); ++i){
+			for(int j = i; j < tileTest.size() && dejaMis == false; ++j){
+				if(classe(tileTest.get(i)) == classe(tileTest.get(j))){
+					dejaMis = true;
+				}else{
+					tileStock.add();
+				}
+			}
+			dejaMis = false;
+		}		
+		System.out.println("(afficheComposante) Les cases adjacentes liées sont : \n" );
+		for(int i = 0; i < tileStock.size(); ++i){
+			System.out.println("( " + tileStock.get(i).getX() + " ; " + tileStock.get(i).getY() + " )\n" );
+		}		
+		System.out.println("(afficheComposante) Fin des cases \n" );		
 	}
 	
 	
