@@ -56,9 +56,11 @@ class Grid {
 		/*
 		* Si fils n'est pas encore dans pere, il va etre dans pere
 		*/
-		if(fils.equals(pere) == false){
-			int starSum = pere.getStarNb() + fils.getStarNb();
-			pere.setStar(starSum);
+		if(pere.getPlayerNum() == fils.getPlayerNum() && (pere.getPlayerNum() == 1 || pere.getPlayerNum() == 2)){
+			if(fils.equals(pere) == false){
+				int starSum = pere.getStarNb() + fils.getStarNb();
+				pere.setNbEtoile(starSum);
+			}
 		}
 	}
 	
@@ -117,7 +119,7 @@ class Grid {
 	* Donner la distance en vol d'oiseau entre deux cases
 	* Tile tile1 et tile2 les deux tiles à lier.
 	* se facade dans la méthode pathfind
-	* N'est probablement pas ce qui est demandé, ce qui nécessiera l'implémentation d'un algorithme de Dijkstra simplifié avec un compteur
+	* N'est probablement pas ce qui est demandé; ce qui nécessiera l'implémentation d'un algorithme de Dijkstra simplifié avec un compteur
 	*/
 	public int relierCasesMin(Tile tile1, Tile tile2){
 		int res = 0;
@@ -246,6 +248,7 @@ class Grid {
 		Tile tileTest;
 		int x = tile1.getX();
 		int y = tile1.getY();
+		boolean result;
 		
 		
 		/* on y va... */
@@ -253,227 +256,290 @@ class Grid {
 			if (tileTab_[x+1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y+1];}
 			else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y+1];}
 			else if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y];}
-			else{return tileTab_[x][y];}
-		 }
-		 else if (y == 0 && x == longueur_-1){
+			else{tileTest = tileTab_[x][y];}
+		}else if (x == 0 && y == longueur_-1){
+			if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y];}
+		 	else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y-1];}
+		 	else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y-1];}
+		 	else{tileTest = tileTab_[x][y];}
+		}else if (x == longueur_-1 && y == 0){
 			if (tileTab_[x][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y];}
 			else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y+1];}
-			else if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y];}
 			else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y+1];}
-			else{return tileTab_[x][y];}
-		}
-		else if (y == 0){
-			if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y];}
 			else if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y];}
-			else if  (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y+1];}
+			else{tileTest = tileTab_[x][y];}
+		}else if (x == 0){
+			if (tileTab_[x+1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y+1];}
+			else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y-1];}
+		 	else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y+1];}
+		 	else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y-1];}
+		 	else if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y];}
+		 	else{tileTest = tileTab_[x][y];}
+		}else if (y == 0){
+			if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y];}
 			else if (tileTab_[x+1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y+1];}
+			else if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y];}
 			else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y+1];}
-			else{return tileTab_[x][y];}
+			else if  (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y+1];}
+			else{tileTest = tileTab_[x][y];}
+		}else if (x == longueur_-1 && y == longueur_-1){
+			if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y];}
+			else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y-1];}
+			else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y-1];}
+			else{tileTest = tileTab_[x][y];}
+		}else if (x == longueur_-1){
+			if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y];}
+			else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y-1];}
+		 	else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y+1];}
+		 	else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y-1];}
+		 	else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y+1];}
+		 	else{tileTest = tileTab_[x][y];}
+		}else if (y == longueur_-1){
+			if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y];}
+			else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y-1];}
+			else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y-1];}
+			else if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y];}
+			else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y-1];}			
+			else{tileTest = tileTab_[x][y];}
+		}else{
+			if (tileTab_[x+1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y+1];}
+			else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y-1];}
+			else if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y];}
+			else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y+1];}
+			else if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y];}
+		 	else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y-1];}		 	
+		 	else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y-1];}
+		 	else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y+1];}		 	
+		 	else{tileTest = tileTab_[x][y];}
 		}
-		else if (x == 0 && y == longueur_-1)
-		{
-			if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x+1][y]));
-		 		return tileTab_[x+1][y];
-		 	}
-		 	else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x][y-1]));
-		 		return tileTab_[x][y-1];
-		 	}
-		 	else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x+1][y-1]));
-		 		return tileTab_[x+1][y-1];
-		 	}
-		 	else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x+1][y-1]));
-		 		return tileTab_[x+1][y-1];
-		 	}
-		 	else
-		 	{
-		 		return tileTab_[x][y];
-		 	}
+		
+		if(tileTest != tileTab_[x][y]){
+			result = tileTest.getPlayerNum() == tileTab_[x][y].getPlayerNum();
+		}else{
+			result = false;
 		}
-		else if (x == 0)
-		{
-			if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x+1][y]));
-		 		return tileTab_[x+1][y];
-		 	}
-		 	else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x][y-1]));
-		 		return tileTab_[x][y-1];
-		 	}
-		 	else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x][y+1]));
-		 		return tileTab_[x][y+1];
-		 	}
-		 	else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x+1][y-1]));
-		 		return tileTab_[x+1][y-1];
-		 	}
-		 	else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x+1][y-1]));
-		 		return tileTab_[x+1][y-1];
-		 	}
-		 	else if (tileTab_[x+1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x+1][y+1]));
-		 		return tileTab_[x+1][y+1];
-		 	}
-		 	else
-		 	{
-		 		return tileTab_[x][y];
-		 	}
-		}
-		if (x == longueur_-1 && y == longueur_-1)
-		{
-			if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-			{
-				//System.out.println(xandy(tileTab_[x+1][y]));
-				return tileTab_[x-1][y];
-			}
-			else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-			{
-				//System.out.println(xandy(tileTab_[x][y+1]));
-				return tileTab_[x][y-1];
-			}
-			else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-			{
-				//System.out.println(xandy(tileTab_[x+1][y+1]));
-				return tileTab_[x-1][y-1];
-			}
-			else
-			{
-				return tileTab_[x][y];
-			}
-		 }
-		else if (x == longueur_-1)
-		{
-			if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x+1][y]));
-		 		return tileTab_[x-1][y];
-		 	}
-		 	else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x][y-1]));
-		 		return tileTab_[x][y-1];
-		 	}
-		 	else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x][y+1]));
-		 		return tileTab_[x][y+1];
-		 	}
-		 	else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x+1][y-1]));
-		 		return tileTab_[x-1][y-1];
-		 	}
-		 	else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x+1][y+1]));
-		 		return tileTab_[x-1][y+1];
-		 	}
-
-		 	else
-		 	{
-		 		return tileTab_[x][y];
-		 	}
-		}
-		else if (y == longueur_-1)
-		{
-			if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-			{
-				//System.out.println(xandy(tileTab_[x+1][y]));
-				return tileTab_[x+1][y];
-			}
-			else if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-			{
-				//System.out.println(xandy(tileTab_[x-1][y]));
-				return tileTab_[x-1][y];
-			}
-			else if  (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-			{
-				//System.out.println(xandy(tileTab_[x][y+1]));
-				return tileTab_[x][y-1];
-			}
-			else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-			{
-				//System.out.println(xandy(tileTab_[x+1][y+1]));
-				return tileTab_[x+1][y-1];
-			}
-			else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-			{
-				//System.out.println(xandy(tileTab_[x-1][y+1]));
-				return tileTab_[x-1][y-1];
-			}
-			else
-			{
-				return tileTab_[x][y];
-			}
-		}
-		else
-		{
-			if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-			{
-				//System.out.println(xandy(tileTab_[x-1][y]));
-				return tileTab_[x-1][y];
-			}
-			else if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-			{
-				//System.out.println(xandy(tileTab_[x+1][y]));
-				return tileTab_[x+1][y];
-			}
-			else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-			{
-				//System.out.println(xandy(tileTab_[x][y+1]));
-				return tileTab_[x][y+1];
-			}
-		 	else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x][y-1]));
-		 		return tileTab_[x][y-1];
-		 	}
-		 	else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x-1][y-1]));
-		 		return tileTab_[x-1][y-1];
-		 	}
-		 	else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x+1][y-1]));
-		 		return tileTab_[x+1][y-1];
-		 	}
-		 	else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x-1][y+1]));
-		 		return tileTab_[x-1][y+1];
-		 	}
-		 	else if (tileTab_[x+1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum())
-		 	{
-		 		//System.out.println(xandy(tileTab_[x+1][y+1]));
-		 		return tileTab_[x+1][y+1];
-		 	}
-		 	else
-		 	{
-		 		return tileTab_[x][y];
-		 	}
-		 }
-	
-	
+		
+		return result;	
 	}
 	
 	
+	/*
+	* Pour la question 8, ou comment faire jouer deux humains
+	*/	
+	public int startGame(){
+		int playerInput;
+		Random randy;
+		int randomX;
+		int randomY;
 		
+		tileTab_ = new Tile[size_][size_];
+		for(int x = 0; x < size_; ++x){
+			for(int y = 0; y < size_ ; ++y){
+				tileTab_[x][y] = new Tile(x, y, 0)
+			}
+		}
+		
+		System.out.println("Donnez le nombre de bases.");
+		playerInput = keyboardInput_.nextInt();
+		for(int cmptr = 0; cmpt < playerInput; ++cmptr){
+			/* ajouter bases player 1 */
+			randy = new Random();			
+			randomX = randy.nextInt((size_ - 1 - 0) + 1) + 0;
+			randy = new Random();
+			randomY = randy.nextInt((size_ - 1 - 0) + 1) + 0;
+			tileTab_[randomX][randomY].colorerCase(1);
+			tileTab_[randomX][randomY].setStar(tileTab_[randomX][randomY].getNbEtoiles() + 1);
+			System.out.println("Une base dans : ( " + randomX +" , "+ randomY + " )");
+			
+			/* ajouter bases player 2 */
+			randy = new Random();
+			randomX = randy.nextInt((size_ - 1 - 0) + 1) + 0;
+			randy = new Random();
+			randomY = randy.nextInt((size_ - 1 - 0) + 1) + 0;
+			tileTab_[randomX][randomY].colorerCase(2);
+			tileTab_[randomX][randomY].setStar(tileTab_[randomX][randomY].getNbEtoiles() + 1);
+			System.out.println("Une base dans : ( " + randomX +" , "+ randomY + " )");
+		}
+		return playerInput;
+	}
+	
+	public void scorerCounter(Tile tile, int playerNum){
+		int x = tile.getX();
+		int y = tile.getY();
+		if(playerNum == 1 && tileTab_[x][y].getNbEtoiles() > playerScore2_ ){
+			playerScore2_ = tileTab_[x][y].getNbEtoile();
+		}else if(playerNum == 2 && tileTab_[x][y].getNbEtoiles() > playerScore1_ ){
+			playerScore1_ = tileTab_[x][y].getNbEtoile();
+		}else if(playerNum == 1 && tileTab_[x][y].getNbEtoiles() == playerScore2_ ){
+			playerScore2_ += tileTab_[x][y].getNbEtoile();
+		}else if(playerNum == 2 && tileTab_[x][y].getNbEtoiles() == playerScore1_ ){
+			playerScore2_ += tileTab_[x][y].getNbEtoile();
+		}
+	}
+	
+	/*
+	* Affichage en unicode et code couleur qui marchera probablement pas en terminal
+	* concatenation de String affich ligne par ligne
+	*/
+	public void display(int turnNum){
+		String affich = new String();
+		if(turnNum % 2 == 1){
+			affich += "==========TOUR DE JOUEUR ROUGE========== \n\n";
+		}else if(turnNum % 2 == 0){
+			affich += "==========TOUR DE JOUEUR BLEU========== \n\n";
+		}
+		
+		for(int x = 0; x < size_; ++x){
+			for(int y = 0; y< size_; ++y){
+				if(tileTab_[x][y].getNbEtoiles() < 1){
+					if(tileTab_[x][y].getPLayerNum() != 1 && tileTab_[x][y].getPLayerNum() != 2){ affich += " ⬜ "; }
+					if(tileTab_[x][y].getPLayerNum() == 1 ){ affich += couleurPlayer1_ + " ⬜ " + couleurVide_; }
+					if(tileTab_[x][y].getPLayerNum() == 2 ){ affich += couleurPlayer2_ + " ⬜ " + couleurVide_; }
+				}else{
+					if(tileTab_[x][y].getPLayerNum() != 1 && tileTab_[x][y].getPLayerNum() != 2){ affich += " * "; }
+					if(tileTab_[x][y].getPLayerNum() == 1 ){ affich += couleurPlayer1_ + " * " + couleurVide_; }
+					if(tileTab_[x][y].getPLayerNum() == 2 ){ affich += couleurPlayer2_ + " * " + couleurVide_; }
+				}
+			}
+			affich += "\n";
+		}
+		
+		System.out.println(affich);
+	}
+	
+	/*
+	* Méthode 8: joueDeuxHumains
+	*/	
+	public void joueDeuxHumains(){
+		int bases;
+		bases = startGame();
+		
+		boolean gameOngoing = true;
+		boolean action = false;
+		boolean checker;
+		int playerNum;
+		int x, y;
+		int turnNum = 0;
+		Tile tileTest;
+		int starNumTile;
+		int starNumVoisin;
+		
+		while(gameOngoing){
+			++turnNum;
+			/* choix des joueurs */
+			if(turnNum % 2 == 1){playerNum = 1;}
+			else if(turnNum % 2 == 0){playerNum = 2;}
+			
+			/* affichage ecran */
+			display(turnNum);
+			afficherScore(playerNum);
+			
+			/* input du joueur */
+			System.out.println("Donnez x");
+			x = keyboardInput_.nextInt();
+			System.out.println("Donnez y");
+			y = keyboardInput_.nextInt();
+			
+			action = tileTab_[x][y].colorerCase(playerNum);
+			checker = relieComposantes(tileTab_[x][y], couleur);
+			if(checker){
+				System.out.println("Vous avex lié quelque chose !");
+			}else{
+				System.out.println("Pas de reliage composantes ! ");
+			}
+			
+			if (x == 0 && y == 0){
+				if (tileTab_[x+1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y+1];}
+				else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y+1];}
+				else if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y];}
+				else{tileTest = tileTab_[x][y];}
+			}else if (x == 0 && y == longueur_-1){
+				if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y];}
+			 	else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y-1];}
+			 	else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y-1];}
+			 	else{tileTest = tileTab_[x][y];}
+			}else if (x == longueur_-1 && y == 0){
+				if (tileTab_[x][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y];}
+				else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y+1];}
+				else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y+1];}
+				else if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y];}
+				else{tileTest = tileTab_[x][y];}
+			}else if (x == 0){
+				if (tileTab_[x+1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y+1];}
+				else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y-1];}
+			 	else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y+1];}
+			 	else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y-1];}
+			 	else if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y];}
+			 	else{tileTest = tileTab_[x][y];}
+			}else if (y == 0){
+				if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y];}
+				else if (tileTab_[x+1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y+1];}
+				else if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y];}
+				else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y+1];}
+				else if  (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y+1];}
+				else{tileTest = tileTab_[x][y];}
+			}else if (x == longueur_-1 && y == longueur_-1){
+				if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y];}
+				else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y-1];}
+				else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y-1];}
+				else{tileTest = tileTab_[x][y];}
+			}else if (x == longueur_-1){
+				if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y];}
+				else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y-1];}
+			 	else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y+1];}
+			 	else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y-1];}
+			 	else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y+1];}
+			 	else{tileTest = tileTab_[x][y];}
+			}else if (y == longueur_-1){
+				if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y];}
+				else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y-1];}
+				else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y-1];}
+				else if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y];}
+				else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y-1];}			
+				else{tileTest = tileTab_[x][y];}
+			}else{
+				if (tileTab_[x+1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y+1];}
+				else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y-1];}
+				else if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y];}
+				else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y+1];}
+				else if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y];}
+			 	else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x][y-1];}		 	
+				 	else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x+1][y-1];}
+		 		else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){return tileTab_[x-1][y+1];}		 	
+		 		else{tileTest = tileTab_[x][y];}
+			}
+			
+			System.out.println(existeCheminCases(tileTest, tileTab_[x][y], playerNum));
+
+			starNumTile = tileTab_[x][y].getNbEtoiles();
+			starNumVoisin = tileTest.getNbEtoiles();
+			
+			if(starNumTile > starNumVoisin){
+				unionFind(x, y, tileTest.getX(), tileTest().getY());			
+			}else{
+				unionFind(tileTest.getX(), tileTest().getY(), x, y);
+			}
+			
+			scorerCounter(tileTab_[x][y], playerNum);
+			if(playerScore1_ == bases){
+				System.out.println("Victoire player 1");
+				fin = false;
+			}else if(playerScore2_ == bases){
+				System.out.println("Victoire player 2");
+				fin = false;
+			}			
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
