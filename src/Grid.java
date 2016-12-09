@@ -468,7 +468,7 @@ class Grid {
 			action = tileTab_[x][y].colorerCase(playerNum);
 			checker = relieComposantes(tileTab_[x][y], playerNum);
 			if(checker){
-				System.out.println("Vous avex lié quelque chose !");
+				System.out.println("Vous avez lié quelque chose !");
 			}else{
 				System.out.println("Pas de reliage composantes ! ");
 			}
@@ -536,7 +536,7 @@ class Grid {
 			
 			System.out.println(existeCheminCases(tileTest, tileTab_[x][y], playerNum));
 			
-			afficheComposante(tileTest, tileTab_[x][y], playerNum);
+			//afficheComposante(tileTest, tileTab_[x][y], playerNum);
 
 			starNumTile = tileTab_[x][y].getNbEtoiles();
 			starNumVoisin = tileTest.getNbEtoiles();
