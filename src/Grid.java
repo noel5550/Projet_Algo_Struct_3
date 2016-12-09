@@ -72,24 +72,15 @@ class Grid {
 	
 	/*
 	* Méthode pour la question 3 et méthode existeCheminCases
+	* Deux cases de meme pere ont forcement la meme couleur
 	*/
 	
-	public boolean existeCheminCases(Tile tileStart, Tile tileEnd, int playerNum){
-		boolean memeUnionFind;
-		boolean memePlayer;
-		/* compression des deux Tiles */
-		compress(tileStart.getX(), tileStart.getY());
-		compress(tileEnd.getX(), tileEnd.getY());
-		
-		memeUnionFind = tileTab_[tileStart.getX()][tileStart.getY()] == tileTab_[tileEnd.getX()][tileEnd.getY()];
-		memePlayer = tileStart.getPlayerNum() == tileEnd.getPlayerNum();
-		
-		return memeUnionFind && memePlayer;	
+	public boolean existeCheminCases(Tile tileStart, Tile tileEnd){
+		return classe(tileStart) == classe(tileEnd);
 	}	
 	
 	/*
 	* Méthode pour la question 2 et méthode récursive afficheComposante
-	* On a un peu triché en utilisant existeCheminCases et en prenant deux Tiles en parametre pour pouvoir le faire en récursif
 	* On affiche les cases parcourus dans les composantes	
 	*/
 	public void afficheComposante(Tile tile, int playerNum){
@@ -112,13 +103,14 @@ class Grid {
 		for(minx; minx <= maxx; ++minxx){
 			for(miny; miny <= maxy; ++miny){
 				if(minx != 0 || miny != 0){
-					if(tileTab_[x + minx][y + miny].getPlayerNum() == tileTab_[x][y]){
+					if(tileTab_[x + minx][y + miny].getPlayerNum() == tileTab_[x][y].getPlayerNum()){
 						tileTest.add(tileTab_[x+minx][y+miny]);
 					}
 				}
 			}
 		}
 		
+		/* enlever les cases qui ne sont pas de celui de player actif */
 		for(int i = 0; i < tileTest.size(); ++i){
 			if(tileTest.get(i).getPlayerNum() != playerNum){
 				tileTest.remove(i);
@@ -129,18 +121,26 @@ class Grid {
 			for(int j = i; j < tileTest.size() && dejaMis == false; ++j){
 				if(classe(tileTest.get(i)) == classe(tileTest.get(j))){
 					dejaMis = true;
-				}else{
-					tileStock.add();
 				}
 			}
+			if (!dejaMis) tileStock.add(tileTest.get(i));
 			dejaMis = false;
 		}		
-		System.out.println("(afficheComposante) Les cases adjacentes liées sont : \n" );
-		for(int i = 0; i < tileStock.size(); ++i){
-			System.out.println("( " + tileStock.get(i).getX() + " ; " + tileStock.get(i).getY() + " )\n" );
-		}		
-		System.out.println("(afficheComposante) Fin des cases \n" );		
+		
+		if(tileStock.size() >= 2){
+			System.out.println("(afficheComposante) Les cases adjacentes liées sont : \n" );
+			for(int i = 0; i < tileStock.size(); ++i){
+				System.out.println("( " + tileStock.get(i).getX() + " ; " + tileStock.get(i).getY() + " )\n" );
+			}		
+			System.out.println("(afficheComposante) Fin des cases \n" );
+		}else{
+			System.out.println("(afficheComposante) Pas d'adjacence ! \n" );
+		}
+		
+		
 	}
+	
+	
 	
 	
 	/*
@@ -172,66 +172,13 @@ class Grid {
 		if((xdeb == xarr)&&(ydeb == yarr)){
 			return result;
 		}else{
-			/*
-			*	Si tileDeb se trouve au SW de tileArr
-			*/
-			if(((xarr - xdeb)>0) && ((yarr - ydeb)>0)){
-				++xdeb;
-				++ydeb;
-				
-				
-			/*
-			*	Si tileDeb se trouve au NE de tileArr
-			*/
-			}else if (((xarr - xdeb)<0) && ((yarr - ydeb)<0)){
-				--xdeb;
-				--ydeb;
-					
-				
-			/*
-			*	Si tileDeb se trouve au SE de tileArr
-			*/
-			}else if(((xarr - xdeb)<0) && ((yarr - ydeb)>0)){
-				--xdeb;
-				++ydeb;
-				
-				
-			/*
-			*	Si tileDeb se trouve au NW de tileArr
-			*/
-			}else if (((xarr - xdeb)>0) && ((yarr - ydeb)<0)){
-				++xdeb;
-				--ydeb;
-					
-
-			/*
-			*	Si tileDeb se trouve au Nord de tileArr
-			*/				
-			}else if (((xarr - xdeb) == 0) && ((yarr - ydeb)<0)){
-				--ydeb;
-					
-			/*
-			*	Si tileDeb se trouve au Sud de tileArr
-			*/					
-			}else if (((xarr - xdeb) == 0) && ((yarr - ydeb)>0)){
-				++ydeb;
-				
-				
-			/*
-			*	Si tileDeb se trouve a l'Ouest de tileArr
-			*/	
-			}else if (((xarr - xdeb)>0) && ((yarr - ydeb)==0)){
-				++xdeb;
-				
-				
-			/*
-			*	Si tileDeb se trouve a l'Est de tileArr
-			*/		
-			}else if (((xarr - xdeb)<0) && ((yarr - ydeb)==0)){
-				--xdeb;
-				
-			}
-
+			
+			if ((xarr - xdeb) < 0) { --xdeb; }			
+			else if ((xarr - xdeb) > 0) { ++xdeb; }	
+			
+			if ((yarr - ydeb) < 0) { --ydeb; }
+			else if ((yarr - ydeb) > 0) { ++ydeb; }
+			
 			++res;
 			return pathfind(xdeb, ydeb, xarr, yarr, res);
 		}
@@ -260,101 +207,91 @@ class Grid {
 	* S'explique tout seul
 	*/
 	public void afficherScore(int playerNum){
-		if(playerNum != 1 && playerNum != 2){
-			System.out.println("Hé mais t'es pas dans le jeu!");
-		}		
-		if(playerNum == 1){
-			System.out.println("Score player 1 : " + playerScore1_);
-		}else if (playerNum == 2){
-			System.out.println("Score player 2 : " + playerScore2_);
+		ArrayList<Tile> tileStock = new ArrayList<Tile>;
+		ArrayList<Tile> tileScore = new ArrayList<Tile>;
+		boolean dejaMis = false;
+		int scoreCount = 0;
+		
+		/* enlever les cases non bases de mauvaise couleur */		
+		for(int x = 0; x < size_ ; ++x){
+			for(int y = 0; y < size_ ; ++y){
+				if((tileTab_[x][y].getPlayerNum() == playerNum) && tileTab_[x][y].getIsBase()){
+					tileStock.get(tileTab_[x][y]);
+				}				
+			}
 		}
+		
+		for(int i = 0; i < tileStock.size(); ++i){
+			for(int j = i; j < tileStock.size() && dejaMis == false; ++j){
+				if(classe(tileTest.get(i)) == classe(tileTest.get(j))){
+					dejaMis = true;
+				}
+			}
+			if (!dejaMis) tileScore.add(tileStock.get(i));
+			dejaMis = false;
+		}
+		
+		/* parcours de tileScore */
+		for(int i = 0; i < tileScore.size(); ++i){
+			scoreCount += nombresEtoiles(tileScore.get(i));
+		}
+		
+		System.out.println("(afficherScore) Le score de joueur " + playerNum + " est : " + scoreCount );
 	}
-
+		
 	/*
-	* Méthode pour la question 7 et méthode relieComposantes
-	* Assez énorme comme on check tous les cases autour
-	* Aurait du trouver quelque chose de reccursif
-	* Ou au moins utiliser des switch
+	* Méthode relie composantes
 	*/
-	
-	public boolean relieComposantes(Tile tile1, int playerNum){
-		Tile tileTest;
-		int x = tile1.getX();
-		int y = tile1.getY();
-		boolean result;
-		
-		
-		/* on y va... */
-		if (x == 0 && y == 0){
-			if (tileTab_[x+1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y+1];}
-			else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y+1];}
-			else if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y];}
-			else{tileTest = tileTab_[x][y];}
-		}else if (x == 0 && y == size_-1){
-			if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y];}
-		 	else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y-1];}
-		 	else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y-1];}
-		 	else{tileTest = tileTab_[x][y];}
-		}else if (x == size_-1 && y == 0){
-			if (tileTab_[x][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y];}
-			else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y+1];}
-			else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y+1];}
-			else if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y];}
-			else{tileTest = tileTab_[x][y];}
-		}else if (x == 0){
-			if (tileTab_[x+1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y+1];}
-			else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y-1];}
-		 	else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y+1];}
-		 	else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y-1];}
-		 	else if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y];}
-		 	else{tileTest = tileTab_[x][y];}
-		}else if (y == 0){
-			if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y];}
-			else if (tileTab_[x+1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y+1];}
-			else if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y];}
-			else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y+1];}
-			else if  (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y+1];}
-			else{tileTest = tileTab_[x][y];}
-		}else if (x == size_-1 && y == size_-1){
-			if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y];}
-			else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y-1];}
-			else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y-1];}
-			else{tileTest = tileTab_[x][y];}
-		}else if (x == size_-1){
-			if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y];}
-			else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y-1];}
-		 	else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y+1];}
-		 	else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y-1];}
-		 	else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y+1];}
-		 	else{tileTest = tileTab_[x][y];}
-		}else if (y == size_-1){
-			if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y];}
-			else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y-1];}
-			else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y-1];}
-			else if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y];}
-			else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y-1];}			
-			else{tileTest = tileTab_[x][y];}
-		}else{
-			if (tileTab_[x+1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y+1];}
-			else if (tileTab_[x-1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y-1];}
-			else if (tileTab_[x+1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y];}
-			else if (tileTab_[x][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y+1];}
-			else if (tileTab_[x-1][y].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y];}
-		 	else if (tileTab_[x][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x][y-1];}		 	
-		 	else if (tileTab_[x+1][y-1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x+1][y-1];}
-		 	else if (tileTab_[x-1][y+1].getPlayerNum() == tileTab_[x][y].getPlayerNum()){tileTest = tileTab_[x-1][y+1];}		 	
-		 	else{tileTest = tileTab_[x][y];}
+	public void relieComposantes(Tile tile1, int playerNum){
+		ArrayList<Tile> tileTest = new ArrayList<Tile>();
+		ArrayList<Tile> tileStock = new ArrayList<Tile>();
+		boolean result = false;
+		boolean dejaMis;
+		int minx = -1, miny = -1, maxx = 1, maxy = 1;
+		int x = tile.getX();
+		int y = tile.getY();
+		if( x == 0){
+			minx = 0;
+		}else if(x == size_ - 1){
+			maxx = 0;
+		}
+		if( y == 0){
+			miny = 0;
+		}else if(y == size_ - 1){
+			maxy = 0;
+		}
+		for(minx; minx <= maxx; ++minxx){
+			for(miny; miny <= maxy; ++miny){
+				if(minx != 0 || miny != 0){
+					if(tileTab_[x + minx][y + miny].getPlayerNum() == tileTab_[x][y].getPlayerNum()){
+						tileTest.add(tileTab_[x+minx][y+miny]);
+					}
+				}
+			}
 		}
 		
-		if(tileTest != tileTab_[x][y]){
-			result = tileTest.getPlayerNum() == tileTab_[x][y].getPlayerNum();
-		}else{
+		for(int i = 0; i < tileTest.size(); ++i){
+			if(tileTest.get(i).getPlayerNum() != playerNum){
+				tileTest.remove(i);
+			}
+		}
+		
+		for(int i = 0; i < tileTest.size(); ++i){
+			for(int j = i; j < tileTest.size() && dejaMis == false; ++j){
+				if(classe(tileTest.get(i)) == classe(tileTest.get(j))){
+					dejaMis = true;
+				}
+			}
+			if (!dejaMis) tileStock.add(tileTest.get(i));
+			dejaMis = false;
+		}		
+		if(tileStock.size() >= 2){
 			result = false;
-		}
-		
-		return result;	
+		}else{
+			result = true;
+		}		
+		return result;
 	}
-	
 	
 	/*
 	* Pour la question 8, ou comment faire jouer deux humains
@@ -381,7 +318,6 @@ class Grid {
 			randy = new Random();
 			randomY = randy.nextInt((size_ - 1 - 0) + 1) + 0;
 			tileTab_[randomX][randomY].colorerCase(1);
-			tileTab_[randomX][randomY].setStar(tileTab_[randomX][randomY].getNbEtoiles() + 1);
 			tileTab_[randomX][randomY].setBase();
 			System.out.println("Une base dans : ( " + randomX +" , "+ randomY + " )");
 			
@@ -391,40 +327,19 @@ class Grid {
 			randy = new Random();
 			randomY = randy.nextInt((size_ - 1 - 0) + 1) + 0;
 			tileTab_[randomX][randomY].colorerCase(2);
-			tileTab_[randomX][randomY].setStar(tileTab_[randomX][randomY].getNbEtoiles() + 1);
 			tileTab_[randomX][randomY].setBase();
 			System.out.println("Une base dans : ( " + randomX +" , "+ randomY + " )");
 		}
 		return playerInput;
 	}
 	
-	public void scorerCounter(Tile tile, int playerNum){
-		int x = tile.getX();
-		int y = tile.getY();
-		if(playerNum == 1 && tileTab_[x][y].getNbEtoiles() > playerScore1_ ){
-			playerScore1_ = tileTab_[x][y].getNbEtoiles();
-			System.out.println("score Player1  " + playerScore1_);
-			System.out.println("score Player2  " + playerScore2_);
-		}else if(playerNum == 1 && tileTab_[x][y].getNbEtoiles() == playerScore1_ ){
-			playerScore1_ += tileTab_[x][y].getNbEtoiles();
-			
-			
-		}else if(playerNum == 2 && tileTab_[x][y].getNbEtoiles() > playerScore2_){
-			playerScore2_ = tileTab_[x][y].getNbEtoiles();
-			System.out.println("score Player1  " + playerScore1_);
-			System.out.println("score Player2  " + playerScore2_);
-		}else if(playerNum == 2 && tileTab_[x][y].getNbEtoiles() == playerScore2_ ){
-			playerScore2_ += tileTab_[x][y].getNbEtoiles();
-		}
-	}
-	
+		
 	/*
 	* Affichage en unicode et code couleur qui marchera probablement pas en terminal
 	* concatenation de String affich ligne par ligne
 	*/
 	public void display(int turnNum){
 		String affich = new String();
-		/*String upper = new String();*/
 
 		
 		if(turnNum % 2 == 1){
@@ -671,18 +586,7 @@ class Grid {
 			}
 		}
 	}
-	
-	/*public void menu(){
-		
-		
-		System.out.println("=============== \n");
-		System.out.println("AfficheComposante : \n");
-		System.out.println("ExisteCheminCases : \n");
-		System.out.println("RelierCasesMin : \n");
-		System.out.println("nombresEtoiles : \n");
-		System.out.println("RelieComposantes : \n");
-		System.out.println("=============== \n");
-	}*/
+
 }
 	
 	
